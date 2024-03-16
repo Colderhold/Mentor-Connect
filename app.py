@@ -585,7 +585,3 @@ def addResource():
     db.session.commit()
     flash("Resource has been added!")
     return redirect(url_for('resources'))
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
