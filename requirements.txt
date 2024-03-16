@@ -16,4 +16,4 @@ Werkzeug
 mysql-connector-python
 qrcode
 Flask-Mail
-FlaskRedis
+Flask-Redis
