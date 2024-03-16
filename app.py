@@ -1,21 +1,17 @@
 import os
-from flask import Flask, session, render_template, request, redirect,url_for,jsonify,flash
+from flask import Flask, session, render_template, request, redirect,url_for, flash
 from flask_session import Session
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+from itsdangerous import URLSafeTimedSerializer
 from random import randint
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import scoped_session, sessionmaker
-import requests
-import secrets
 from models import *
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import qrcode
-from flask import Flask, render_template, send_file
-from io import BytesIO
+from flask import Flask, render_template
 import qrcode
-import pandas as pd
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
