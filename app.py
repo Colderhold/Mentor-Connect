@@ -12,13 +12,16 @@ from datetime import datetime
 import qrcode
 from flask import Flask, render_template
 from flask_redis import FlaskRedis
-import qrcode
-import secrets
+import qrcode, redis, secrets
+
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-app.config['REDIS_URL'] = 'redis://localhost:6379/0'  # Adjust the Redis URL as needed
-redis_store = FlaskRedis(app)
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Configure Flask-Session to use Redis
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = redis_client
 app.secret_key = 'your_secret_key_here'
 
 mail = Mail(app)
@@ -32,7 +35,6 @@ db.init_app(app)
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = os.environ.get("SESSION_TYPE", "filesystem")
 Session(app)
 
 
