@@ -297,6 +297,11 @@ def confirm_email(token):
 def menteeHome():
     return render_template("menteeHome.html")
 
+@app.route("/mentorHome", methods=["GET"])
+def mentorHome():
+    #add a check to make sure that the user is indeed a mentor
+    return render_template("mentorHome.html")
+
 
 @app.route("/resources", methods=["GET"])
 def resources():
@@ -366,11 +371,6 @@ def delete_mentee(username):
         flash(f'Mentee {username} not found', 'error')
 
     return redirect(url_for('mentee'))
-
-@app.route("/mentorHome", methods=["GET"])
-def mentorHome():
-    #add a check to make sure that the user is indeed a mentor
-    return render_template("mentorHome.html")
 
 @app.route("/profileChanges", methods=["POST"])
 def profileChanges():
