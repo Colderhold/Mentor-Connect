@@ -61,12 +61,3 @@ Set up XAMPP for local development.
 Run the Flask application: python app.py
 
 Access the application through the provided URL.
-
-
-**Contributors**
-
-Your Name - Role (e.g., Developer, Designer)
-
-Contributor 1 - Role
-
-Contributor 2 - Role
