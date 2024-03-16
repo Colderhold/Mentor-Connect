@@ -11,10 +11,15 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import qrcode
 from flask import Flask, render_template
+from flask_redis import FlaskRedis
 import qrcode
+import secrets
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
+app.config['REDIS_URL'] = 'redis://localhost:6379/0'  # Adjust the Redis URL as needed
+redis_store = FlaskRedis(app)
+app.secret_key = 'your_secret_key_here'
 
 mail = Mail(app)
 s = URLSafeTimedSerializer('Thisisasecret!')
@@ -30,15 +35,21 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = os.environ.get("SESSION_TYPE", "filesystem")
 Session(app)
 
+
 @app.route("/")
 def login():
-    if session.get("username") == None:
+    session_token = session.get("session_token")
+    if session_token is None:
+        session_token = secrets.token_hex(16)
+        session["session_token"] = session_token
+    if session.get("username") is None:
         return render_template("login.html")
     else:
         if session.get("user_type") == "mentee":
             return redirect(url_for('menteeHome'))
         else:
             return redirect(url_for('mentorHome'))
+        
 
 @app.route("/validateUser", methods=["POST"])
 def validateUser():
