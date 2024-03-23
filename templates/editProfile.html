@@ -11,7 +11,7 @@
 
 {% block body %}
 
-<h2 style="text-align:center;"> Profile </h2>
+<h1 style="text-align:center;"> Profile </h1>
 {% if session["user_type"] == "mentee" %}
 <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
   <li class="nav-item">
@@ -335,7 +335,7 @@
   
     </div>
       </div>
-
+      
    <script>
     document.getElementById("saveAsPngButton").addEventListener("click", function () {
         // Get the QR code image element
@@ -414,15 +414,10 @@
               <input type="checkbox" form="editProfile" name="meetAlumni"  id="exampleCheck2">
             {% endif %}
             <label class="form-check-label" for="exampleCheck2">Meeting an alumni mentor</label><br>
-
-
           {% endif %}
-
         </div>
-
     </div>
   </div><!-- /.col -->
-
 </div><!-- /.row -->
 
 <style>
@@ -437,9 +432,6 @@
   <div class="space-20"></div>
 <h2 style='text-align: center; margin-top: 20px;'>Mentee Grade Table</h2>
 <div class='line'></div>
-  <div class="col-xs-12 col-sm-3 center">
-    
-    <div>
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -508,94 +500,163 @@
       h4 {
           display: flex;
       }
-        </style>
+      </style>
     </head>
     <body>
+      
       <form method="POST" action="{{ url_for('academicChanges') }}" id="academicChanges">
+        <div class="container center">
+            <div style="display: flex; justify-content: center;">
+                <div class="semester-select" style="align-items: center;">
+                    <!-- Dropdown for selecting semester -->
+                    <label for="semester">Select Semester:</label>
+                    <select name="sem" id="semester" class="form">
+                        <option value="">Select Semester</option>
+                        <!-- Generate options dynamically -->
+                        {% for sem in range(1, 9) %}
+                        <option value="{{ sem }}">Semester {{ sem }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" id="row-count" name="row-count" value="5">
+            <table id="mentee-grades">
+                <thead>
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Subject</th>
+                        <th>Marks in IA (Avg)</th>
+                        <th>Marks in Semester</th>
+                        <th>Total Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows generated dynamically -->
+                    <!-- Use a loop to generate rows with unique names -->
+                    {% for i in range(5) %}
+                    <tr>
+                        <td>{{ i + 1 }}</td>
+                        <td><input type="text" name="subject_{{ i }}" class="form" placeholder='Enter subject {{ i + 1 }}'></td>
+                        <td><input type="text" name="marks_ia_{{ i }}" class="form" placeholder='Enter marks'></td>
+                        <td><input type="text" name="marks_sem_{{ i }}" class="form" placeholder='Enter marks'></td>
+                        <td><input type="text" name="total_marks_{{ i }}" class="form" placeholder='Enter marks'></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        
+            <input type="text" name="cgpa" class="form" placeholder="Enter CGPA" style="width: 80%; padding: 10px; margin: 10px auto 0 auto; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; display: block;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                <div style="padding-left: 8%;">
+                    <button class="btn btn-outline-success" type="submit">Submit</button>
+                </div>
+                <div class="button-container" style="padding-right: 8%;">
+                    <button class="add-row-button" onclick="addRow()">Add Row</button>
+                    <button class="delete-row-button" onclick="deleteRow()">Delete Row</button>
+                </div>
+            </div>
+        </form>
 
-        <div id="mentee-grades" style="display: none;">
-          <h2 style="text-align: center; margin-top: 20px;">Mentee Grade Table</h2>
-          <table>
-            <thead>
-              <tr>
-                  <th>Sr. No.</th>
-                  <th>Subject</th>
-                  <th>Marks in IA (Avg)</th>
-                  <th>Marks in Semester</th>
-                  <th>Total Marks</th>
-              </tr>
-          </thead>
+  <div class="modal fade" id="academicModal" tabindex="-1" role="dialog" aria-labelledby="academicModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style='max-width: 600px;'>
+        <div class="modal-content">
+            <div class="modal-header" style='display: flex;'>
+                <h2 class="modal-title" style="padding: 20px 38%;" id="academicModalLabel">Grades</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-          <tbody>
-            <!-- Rows generated dynamically -->
-            <!-- Use a loop to generate rows with unique names -->
-            {% for i in range(5) %}
-            <tr>
-                <td>{{ i + 1 }}</td>
-                <td><input type="text" name="subject_{{ i }}" class="form" placeholder='Enter subject {{ i + 1 }}'></td>
-                <td><input type="text" name="marks_ia_{{ i }}" class="form" placeholder='Enter marks'></td>
-                <td><input type="text" name="marks_sem_{{ i }}" class="form" placeholder='Enter marks'></td>
-                <td><input type="text" name="total_marks_{{ i }}" class="form" placeholder='Enter marks'></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-
-          </table>
-      </div>
-
-        <h4>Semester <input type="text" name="sem" placeholder = 'Enter semester' class = 'form1'></h4>
-        <input type="hidden" id="row-count" name="row-count" value="5">
-        <table>
-            <thead>
-                <tr>
-                    <th>Sr. No.</th>
-                    <th>Subject</th>
-                    <th>Marks in IA (Avg)</th>
-                    <th>Marks in Semester</th>
-                    <th>Total Marks</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows generated dynamically -->
-                <!-- Use a loop to generate rows with unique names -->
-                {% for i in range(5) %}
-                <tr>
-                    <td>{{ i + 1 }}</td>
-                    <td><input type="text" name="subject_{{ i }}" class="form" placeholder='Enter subject {{ i + 1 }}'></td>
-                    <td><input type="text" name="marks_ia_{{ i }}" class="form" placeholder='Enter marks'></td>
-                    <td><input type="text" name="marks_sem_{{ i }}" class="form" placeholder='Enter marks'></td>
-                    <td><input type="text" name="total_marks_{{ i }}" class="form" placeholder='Enter marks'></td>
-                </tr>
+            {% if academic_record %}
+                {% set semesters = academic_record|groupby('sem') %}
+                {% for semester, records in semesters %}
+                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <h3 style="margin: 20px 35%;">Semester {{ semester }}</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>IA Marks</th>
+                                    <th>Semester Marks</th>
+                                    <th>Total Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                    <tr>
+                                        <td>{{ record.subject }}</td>
+                                        <td>{{ record.marks_ia }}</td>
+                                        <td>{{ record.marks_sem }}</td>
+                                        <td>{{ record.total_marks }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <h4 style="margin: 10px 38%;">CGPA: {{ records[0].cgpa }}</h4>
+                        <div class='line'></div>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
-        <input class="btn btn-outline-success" type="submit" value="Submit">
-    </form>
+            {% else %}
+                <div class="modal-body">
+                    <p>No details added by {{ username }}</p>
+                </div>
+            {% endif %}
 
-    <div class="button-container">
-      <button class="add-row-button" onclick="addRow()">Add Row</button>
-      <button class="delete-row-button" onclick="deleteRow()">Delete Row</button>
-      </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+      <script>
+        document.getElementById("academicChanges").addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the form from submitting initially
+  
+          // Validate each row before submitting the form
+          if (validateRows()) {
+              // If all rows are valid, submit the form
+              this.submit();
+          } else {
+              // If any row is invalid, display an error message
+              alert("Error: Please fill in all fields for each row.");
+          }
+      });
+  
+      function validateRows() {
+          // Get all rows in the table body
+          const rows = document.querySelectorAll('#mentee-grades1 tbody tr');
+  
+          // Iterate over each row and validate its input fields
+          for (let row of rows) {
+              // Get input fields in the current row
+              const inputs = row.querySelectorAll('input[type="text"]');
+  
+              // Check if any input field in the row is empty
+              for (let input of inputs) {
+                  if (!input.value.trim()) {
+                      return false; // Return false if any field in the row is empty
+                  }
+              }
+          }
+  
+          return true; // Return true if all rows have all fields filled in
+      }
     
-    {% endif %}
-
-        <script>
-
-          document.getElementById("academicChanges").addEventListener("submit", function (event) {
-            event.preventDefault(); 
-            showGradeTable();
-        });
-    
-        function showGradeTable() {
-            const gradeTable = document.getElementById("mentee-grades");
-            gradeTable.style.display = "block"; // Show the grade table
-        }
-
-          function addRow() {
+        function addRow() {
             const rowCountInput = document.getElementById('row-count');
             let rowCount = parseInt(rowCountInput.value);
-        
-            const table = document.querySelector('table tbody');
+    
+            const tableBody = document.querySelector('#mentee-grades1 tbody');
+    
+            // Check if table body exists, create it if not
+            if (!tableBody) {
+                console.error('Table body does not exist.');
+                return;
+            }
+    
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td>${rowCount + 1}</td>
@@ -604,56 +665,47 @@
                 <td><input type="text" name="marks_sem_${rowCount}" class="form" placeholder="Enter marks"></td>
                 <td><input type="text" name="total_marks_${rowCount}" class="form" placeholder="Enter marks"></td>
             `;
-        
-            table.appendChild(newRow);
-        
+    
+            tableBody.appendChild(newRow);
+    
             // Increment the row count and update the hidden input field
             rowCount++;
             rowCountInput.value = rowCount;
         }
+    
         function deleteRow() {
-          const rowCountInput = document.getElementById('row-count');
-          let rowCount = parseInt(rowCountInput.value);
-      
-          if (rowCount > 0) {
-              // Decrement the row count
-              rowCount--;
-      
-              // Update the hidden input field
-              rowCountInput.value = rowCount;
-      
-              // Find the table's tbody
-              const table = document.querySelector('table tbody');
-      
-              // Remove the last row
-              table.removeChild(table.lastElementChild);
-          }
-      }      
-          </script>
-    </div>
-  </div>
-</div>
+            const rowCountInput = document.getElementById('row-count');
+            let rowCount = parseInt(rowCountInput.value);
+    
+            if (rowCount > 0) {
+                // Decrement the row count
+                rowCount--;
+    
+                // Update the hidden input field
+                rowCountInput.value = rowCount;
+    
+                // Find the table's tbody
+                const tableBody = document.querySelector('#mentee-grades1 tbody');
+    
+                // Remove the last row
+                if (tableBody && tableBody.children.length > 0) {
+                    tableBody.removeChild(tableBody.lastElementChild);
+                }
+            }
+        }
 
-<div class="line"></div>
+$(document).ready(function () {
+    $("#personal_details-btn").click(function () {
+        $("#personal_details").show();  // Show personal details
+        $("#academic_details").hide();  // Hide academic details
+    });
 
-<script>
-  $(document).ready(function () {
-      $("#personal_details-btn").click(function () {
-          $("#personal_details").show();  // Show personal details
-          $("#academic_details").hide();  // Hide academic details
-      });
+    $("#academic_details-btn").click(function () {
+        $("#academic_details").show();  // Show academic details
+        $("#personal_details").hide();  // Hide personal details
+    });
+});
 
-      $("#academic_details-btn").click(function () {
-          $("#academic_details").show();  // Show academic details
-          $("#personal_details").hide();  // Hide personal details
-      });
-  });
-</script>
-</body>
-</html>
-
-
-<script>
   function updateProfilePicture(input) {
     const profilePicture = document.getElementById("profilePicture");
 
@@ -667,26 +719,68 @@
       reader.readAsDataURL(input.files[0]);
     }
   }
+
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#blah')
+            .attr('src', e.target.result);
+        };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
 </script>
 
 <script>
-  function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+  document.addEventListener("DOMContentLoaded", function() {
+      // Get references to the buttons
+      const academicDetailsBtn = document.getElementById("academic_details-btn");
+      const viewAcademicBtn = document.getElementById("view-academic-btn");
+      const personalDetailsBtn = document.getElementById("personal_details-btn");
+      const saveChangesBtn = document.getElementById("save-changes-btn");
 
-                reader.onload = function (e) {
-                    $('#blah')
-                        .attr('src', e.target.result);
-                };
+      // Check if the button should be visible based on stored state
+      const viewAcademicBtnVisible = localStorage.getItem("viewAcademicBtnVisible");
+      if (viewAcademicBtnVisible === "true") {
+          viewAcademicBtn.style.display = "block";
+          saveChangesBtn.style.display = "none";
+      } else {
+          viewAcademicBtn.style.display = "none";
+          saveChangesBtn.style.display = "block";
+      }
 
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+      // Add event listener to the academic details button
+      academicDetailsBtn.addEventListener("click", function() {
+          // Show the view academic details button
+          viewAcademicBtn.style.display = "block";
+          // Hide the save changes button
+          saveChangesBtn.style.display = "none";
+          // Store visibility state in local storage
+          localStorage.setItem("viewAcademicBtnVisible", "true");
+      });
+
+      // Add event listener to the personal details button
+      personalDetailsBtn.addEventListener("click", function() {
+          // Hide the view academic details button
+          viewAcademicBtn.style.display = "none";
+          // Show the save changes button
+          saveChangesBtn.style.display = "block";
+          // Store visibility state in local storage
+          localStorage.setItem("viewAcademicBtnVisible", "false");
+      });
+  });
 </script>
 
+</body>
+</html>
+{% endif %}
 {% endblock %}
 
 {% block right_button %}
 <button style = 'margin-right: 10px;' class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('change_password') }}';">Change Password</button>
-<button style = 'margin-right: 10px;' type="submit" form="editProfile" class="btn btn-outline-success">Save Changes</button>
+<button style = 'margin-right: 10px;' type="submit" form="editProfile" id="save-changes-btn" class="btn btn-outline-success">Save Changes</button>
+<button style = 'margin-right: 10px;' type="button" class="btn btn-primary" id="view-academic-btn" style="display: none;" data-toggle="modal" data-target="#academicModal">View Academic Details</button>
 {% endblock %}

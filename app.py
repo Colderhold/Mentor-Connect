@@ -5,6 +5,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from random import randint
 from sqlalchemy import create_engine, func
+from sqlalchemy import and_
 from sqlalchemy.orm import scoped_session, sessionmaker
 from models import *
 from werkzeug.utils import secure_filename
@@ -27,7 +28,7 @@ db.init_app(app)
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = os.environ.get("SESSION_TYPE", "filesystem")
+app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
@@ -40,6 +41,7 @@ def login():
             return redirect(url_for('menteeHome'))
         else:
             return redirect(url_for('mentorHome'))
+
 
 @app.route("/validateUser", methods=["POST"])
 def validateUser():
@@ -77,14 +79,17 @@ def validateUser():
             flash("Incorrect password or username, please try again!")
             return redirect(url_for('login'))
 
+
 @app.route('/log_out')
 def log_out():
     session.pop("username")
     return redirect(url_for('login'))
 
+
 @app.route("/register")
 def register():
     return render_template("register.html")
+
 
 @app.route("/editProfile", methods=["GET", "POST"])
 def editProfile():
@@ -155,8 +160,9 @@ def editProfile():
 
             db.session.commit()
             return redirect(url_for('menteeHome'))
-
-        return render_template("editProfile.html", mentee=mentee)
+        
+        academic_record = Mentee_Grades.query.filter_by(username=username)
+        return render_template("editProfile.html", mentee=mentee, academic_record=academic_record)
 
     else:
         # Handle other user types or unexpected cases
@@ -297,6 +303,7 @@ def confirm_email(token):
 def menteeHome():
     return render_template("menteeHome.html")
 
+
 @app.route("/mentorHome", methods=["GET"])
 def mentorHome():
     #add a check to make sure that the user is indeed a mentor
@@ -310,6 +317,7 @@ def resources():
     NUMBER_OF_RESOURCES = len(resources_data)
     return render_template("resources.html", resources_data = resources_data)
 
+
 @app.route("/deleteResource/<int:id>", methods=["POST"])
 def deleteResource(id):
     # Fetch the resource by its ID and delete it
@@ -318,6 +326,7 @@ def deleteResource(id):
         db.session.delete(resource)
         db.session.commit()
     return redirect(url_for('resources'))
+
 
 @app.route("/network", methods=["GET", "POST"])
 def network():
@@ -333,6 +342,7 @@ def network():
     if (not mentee_data) and (not mentor_data):
         flash("I hope you enjoy looking at a blank screen...")
     return render_template("network.html",  mentee_data = mentee_data, mentor_data = mentor_data)
+
 
 @app.route('/changePassword', methods=['GET', 'POST'])
 def change_password():
@@ -357,6 +367,7 @@ def change_password():
     # Render the "Change Password" page for GET requests
     return render_template('change_password.html')
 
+
 @app.route('/deleteMentee/<username>', methods=['GET', 'POST'])
 def delete_mentee(username):
     # Handle the deletion of the mentee with the given username
@@ -371,6 +382,7 @@ def delete_mentee(username):
         flash(f'Mentee {username} not found', 'error')
 
     return redirect(url_for('mentee'))
+
 
 @app.route("/profileChanges", methods=["POST"])
 def profileChanges():
@@ -482,51 +494,57 @@ def verify_mentor_credentials(username):
 @app.route("/academicChanges", methods=["POST"])
 def academicChanges():
     if session.get("user_type") == "mentee":
-        username = session.get('username')
-        
-        # Retrieve the total number of rows from the form
-        total_rows = int(request.form.get('row-count'))
-        all_rows_filled = True
-        user_data_list = []
-
         try:
-            # Iterate through the rows and retrieve data
+            username = session.get('username')
+            
+            # Retrieve the total number of rows from the form
+            total_rows = int(request.form.get('row-count'))
+            all_rows_filled = True
+            user_data_list = []
+
+            # Iterate through the rows and collect data
             for i in range(total_rows):
-                # Do not assign a value to 'id', it's an auto-incremented primary key
                 sem = request.form.get('sem')
                 subject = request.form.get(f'subject_{i}')
                 marks_ia = request.form.get(f'marks_ia_{i}')
                 marks_sem = request.form.get(f'marks_sem_{i}')
-                attempt2 = request.form.get(f'attempt2_{i}')
-                attempt3 = request.form.get(f'attempt3_{i}')
-                attempt4 = request.form.get(f'attempt4_{i}')
+                total_marks = request.form.get(f'total_marks_{i}')
+                cgpa = request.form.get('cgpa')
                 
                 # Check if any of the fields in the row are empty
-                if not subject or not marks_ia or not marks_sem:
+                if not subject or not marks_ia or not marks_sem or not total_marks:
                     all_rows_filled = False
                     flash("Error: Please fill in all fields for each row.")
                     break  # Exit the loop if any row is incomplete
 
-                # Create a new Mentee_Grades instance
-                user_data1 = Mentee_Grades(
-                    username=username,
-                    sem=sem,
-                    subject=subject,
-                    marks_ia=marks_ia,
-                    marks_sem=marks_sem,
-                    attempt2=attempt2,
-                    attempt3=attempt3,
-                    attempt4=attempt4)
-                user_data_list.append(user_data1)
-            # Check if all rows are filled before committing
+                # Create a dictionary for each row's data
+                user_data = {
+                    'username': username,
+                    'sem': sem,
+                    'subject': subject,
+                    'marks_ia': marks_ia,
+                    'marks_sem': marks_sem,
+                    'total_marks': total_marks,
+                    'cgpa': cgpa
+                }
+                user_data_list.append(user_data)
+
             if all_rows_filled:
-               for user_data1 in user_data_list:
-                  db.session.add(user_data1)
-               db.session.commit()
-               flash("Grades have been added!")
+                # Delete existing entries for the given semester and user
+                for data in user_data_list:
+                    Mentee_Grades.query.filter_by(username=data['username'], sem=data['sem']).delete()
+
+                # Create new entries
+                for data in user_data_list:
+                    new_entry = Mentee_Grades(**data)
+                    db.session.add(new_entry)
+
+                # Commit changes to the database
+                db.session.commit()
+                flash("Grades have been added!")
         except Exception as e:
-            flash("Error: An error occurred while saving data: " + str(e))
-            db.session.rollback()
+            flash("Error: An error occurred while processing form data: " + str(e))
+            db.session.rollback()  # Rollback changes if an error occurs
     else:
         flash("Error: User is not a mentee")
 
@@ -550,6 +568,7 @@ def mentee():
     resources_data = Resource.query.filter(Resource.username.in_(mentee_usernames)).all()
 
     return render_template('mentee.html', mentees=mentee_names, resources_data=resources_data, academic_details=academic_details)
+
 
 @app.route("/addResource", methods=["POST"])
 def addResource():

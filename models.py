@@ -78,6 +78,7 @@ class Mentee_Grades(db.Model):
   marks_ia = db.Column(db.Float(), nullable=False)
   marks_sem = db.Column(db.Float(), nullable=False)
   total_marks = db.Column(db.Float(), nullable=False)
+  cgpa = db.Column(db.Float(), nullable=False)
   
   
 class Assigned_Mentee(db.Model):

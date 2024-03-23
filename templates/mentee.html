@@ -143,20 +143,23 @@
 
 
 {% set mentee_marks = academic_details | selectattr("username", "equalto", mentees[i]) %}
-    <div class="modal fade" id="academicModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="academicModalLabel{{ i }}" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="academicModalLabel{{ i }}">Academic Details for {{ mentees[i] }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+{% set grouped_marks = mentee_marks | groupby('sem') %}
+
+<div class="modal fade" id="academicModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="academicModalLabel{{ i }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="academicModalLabel{{ i }}">Academic Details for {{ mentees[i] }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                {% for semester, records in grouped_marks %}
+                    <h4 style="margin: 10px 35%;">Semester {{ semester }}</h4>
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Semester</th>
                                 <th>Subject</th>
                                 <th>IA Marks</th>
                                 <th>Semester Marks</th>
@@ -164,9 +167,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for academic_record in mentee_marks %}
+                            {% for academic_record in records %}
                                 <tr>
-                                    <td>{{ academic_record.sem }}</td>
                                     <td>{{ academic_record.subject }}</td>
                                     <td>{{ academic_record.marks_ia }}</td>
                                     <td>{{ academic_record.marks_sem }}</td>
@@ -175,18 +177,22 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                </div>
-                {% if not mentee_marks %}
-                <li>No details added by {{ mentees[i] }}</li>
-                {% endif%}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+                    <h4 style="margin: 10px 35%;">CGPA: {{ records[0].cgpa }}</h4>
+                    <div class='line'></div>
+                {% endfor %}
+            </div>
+            {% if not mentee_marks %}
+            <li>No details added by {{ mentees[i] }}</li>
+            {% endif%}
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 {% endfor %}
+
+
 
 <script>
     // Get the input field and table
