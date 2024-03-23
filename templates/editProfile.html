@@ -47,13 +47,13 @@
   </div><!-- /.col -->
 
   <div class="col-xs-12 col-sm-9">
-    <h4 style='margin-top: 30px;'>
+    <h2 style='margin-top: 30px;'>
       <span style="text-align: center;"> Personal Details </span>
-    </h4>
+    </h2>
     <div class="line"></div>
-    <h4>
+    <h3>
       <span class="middle">{{session['fname']}} {{session['lname']}}</span>
-    </h4>
+    </h3>
     <div class="profile-user-info">
 
       <div class="profile-info-row">
@@ -782,5 +782,7 @@ $(document).ready(function () {
 {% block right_button %}
 <button style = 'margin-right: 10px;' class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('change_password') }}';">Change Password</button>
 <button style = 'margin-right: 10px;' type="submit" form="editProfile" id="save-changes-btn" class="btn btn-outline-success">Save Changes</button>
+{% if session["user_type"] == "mentee" %}
 <button style = 'margin-right: 10px;' type="button" class="btn btn-primary" id="view-academic-btn" style="display: none;" data-toggle="modal" data-target="#academicModal">View Academic Details</button>
+{% endif %}
 {% endblock %}
