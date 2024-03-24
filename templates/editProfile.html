@@ -610,101 +610,100 @@
     </div>
 </div>
 
+<script>
+  document.getElementById("academicChanges").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the form from submitting initially
 
-      <script>
-        document.getElementById("academicChanges").addEventListener("submit", function (event) {
-          event.preventDefault(); // Prevent the form from submitting initially
-  
-          // Validate each row before submitting the form
-          if (validateRows()) {
-              // If all rows are valid, submit the form
-              this.submit();
-          } else {
-              // If any row is invalid, display an error message
-              alert("Error: Please fill in all fields for each row.");
-          }
-      });
-  
-      function validateRows() {
-          // Get all rows in the table body
-          const rows = document.querySelectorAll('#mentee-grades1 tbody tr');
-  
-          // Iterate over each row and validate its input fields
-          for (let row of rows) {
-              // Get input fields in the current row
-              const inputs = row.querySelectorAll('input[type="text"]');
-  
-              // Check if any input field in the row is empty
-              for (let input of inputs) {
-                  if (!input.value.trim()) {
-                      return false; // Return false if any field in the row is empty
-                  }
-              }
-          }
-  
-          return true; // Return true if all rows have all fields filled in
+    // Validate each row before submitting the form
+    if (validateRows()) {
+      // If all rows are valid, submit the form
+      this.submit();
+    } else {
+      // If any row is invalid, display an error message
+      alert("Error: Please fill in all fields for each row.");
+    }
+  });
+
+  function validateRows() {
+    // Get all rows in the table body
+    const rows = document.querySelectorAll('#mentee-grades1 tbody tr');
+
+    // Iterate over each row and validate its input fields
+    for (let row of rows) {
+      // Get input fields in the current row
+      const inputs = row.querySelectorAll('input[type="text"]');
+
+      // Check if any input field in the row is empty
+      for (let input of inputs) {
+        if (!input.value.trim()) {
+          return false; // Return false if any field in the row is empty
+        }
       }
-    
-        function addRow() {
-            const rowCountInput = document.getElementById('row-count');
-            let rowCount = parseInt(rowCountInput.value);
-    
-            const tableBody = document.querySelector('#mentee-grades1 tbody');
-    
-            // Check if table body exists, create it if not
-            if (!tableBody) {
-                console.error('Table body does not exist.');
-                return;
-            }
-    
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td>${rowCount + 1}</td>
-                <td><input type="text" name="subject_${rowCount}" class="form" placeholder="Enter subject ${rowCount + 1}"></td>
-                <td><input type="text" name="marks_ia_${rowCount}" class="form" placeholder="Enter marks"></td>
-                <td><input type="text" name="marks_sem_${rowCount}" class="form" placeholder="Enter marks"></td>
-                <td><input type="text" name="total_marks_${rowCount}" class="form" placeholder="Enter marks"></td>
-            `;
-    
-            tableBody.appendChild(newRow);
-    
-            // Increment the row count and update the hidden input field
-            rowCount++;
-            rowCountInput.value = rowCount;
-        }
-    
-        function deleteRow() {
-            const rowCountInput = document.getElementById('row-count');
-            let rowCount = parseInt(rowCountInput.value);
-    
-            if (rowCount > 0) {
-                // Decrement the row count
-                rowCount--;
-    
-                // Update the hidden input field
-                rowCountInput.value = rowCount;
-    
-                // Find the table's tbody
-                const tableBody = document.querySelector('#mentee-grades1 tbody');
-    
-                // Remove the last row
-                if (tableBody && tableBody.children.length > 0) {
-                    tableBody.removeChild(tableBody.lastElementChild);
-                }
-            }
-        }
+    }
 
-$(document).ready(function () {
+    return true; // Return true if all rows have all fields filled in
+  }
+
+  function addRow() {
+    const rowCountInput = document.getElementById('row-count');
+    let rowCount = parseInt(rowCountInput.value);
+
+    const tableBody = document.querySelector('#mentee-grades1 tbody');
+
+    // Check if table body exists, create it if not
+    if (!tableBody) {
+      console.error('Table body does not exist.');
+      return;
+    }
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td>${rowCount + 1}</td>
+      <td><input type="text" name="subject_${rowCount}" class="form" placeholder="Enter subject ${rowCount + 1}"></td>
+      <td><input type="text" name="marks_ia_${rowCount}" class="form" placeholder="Enter marks"></td>
+      <td><input type="text" name="marks_sem_${rowCount}" class="form" placeholder="Enter marks"></td>
+      <td><input type="text" name="total_marks_${rowCount}" class="form" placeholder="Enter marks"></td>
+    `;
+
+    tableBody.appendChild(newRow);
+
+    // Increment the row count and update the hidden input field
+    rowCount++;
+    rowCountInput.value = rowCount;
+  }
+
+  function deleteRow() {
+    const rowCountInput = document.getElementById('row-count');
+    let rowCount = parseInt(rowCountInput.value);
+
+    if (rowCount > 0) {
+      // Decrement the row count
+      rowCount--;
+
+      // Update the hidden input field
+      rowCountInput.value = rowCount;
+
+      // Find the table's tbody
+      const tableBody = document.querySelector('#mentee-grades1 tbody');
+
+      // Remove the last row
+      if (tableBody && tableBody.children.length > 0) {
+        tableBody.removeChild(tableBody.lastElementChild);
+      }
+    }
+  }
+
+  $(document).ready(function () {
     $("#personal_details-btn").click(function () {
-        $("#personal_details").show();  // Show personal details
-        $("#academic_details").hide();  // Hide academic details
+      $("#personal_details").show();  // Show personal details
+      $("#academic_details").hide();  // Hide academic details
     });
 
     $("#academic_details-btn").click(function () {
-        $("#academic_details").show();  // Show academic details
-        $("#personal_details").hide();  // Hide personal details
+      $("#academic_details").show();  // Show academic details
+      $("#personal_details").hide();  // Hide personal details
     });
-});
+  });
 
   function updateProfilePicture(input) {
     const profilePicture = document.getElementById("profilePicture");
@@ -722,57 +721,55 @@ $(document).ready(function () {
 
   function readURL(input) {
     if (input.files && input.files[0]) {
-        var reader = new FileReader();
+      var reader = new FileReader();
 
-        reader.onload = function (e) {
-            $('#blah')
-            .attr('src', e.target.result);
-        };
+      reader.onload = function (e) {
+        $('#blah').attr('src', e.target.result);
+      };
 
       reader.readAsDataURL(input.files[0]);
     }
   }
-</script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-      // Get references to the buttons
-      const academicDetailsBtn = document.getElementById("academic_details-btn");
-      const viewAcademicBtn = document.getElementById("view-academic-btn");
-      const personalDetailsBtn = document.getElementById("personal_details-btn");
-      const saveChangesBtn = document.getElementById("save-changes-btn");
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get references to the buttons
+    const academicDetailsBtn = document.getElementById("academic_details-btn");
+    const viewAcademicBtn = document.getElementById("view-academic-btn");
+    const personalDetailsBtn = document.getElementById("personal_details-btn");
+    const saveChangesBtn = document.getElementById("save-changes-btn");
 
-      // Check if the button should be visible based on stored state
-      const viewAcademicBtnVisible = localStorage.getItem("viewAcademicBtnVisible");
-      if (viewAcademicBtnVisible === "true") {
-          viewAcademicBtn.style.display = "block";
-          saveChangesBtn.style.display = "none";
-      } else {
-          viewAcademicBtn.style.display = "none";
-          saveChangesBtn.style.display = "block";
-      }
+    // Check if the button should be visible based on stored state
+    const viewAcademicBtnVisible = localStorage.getItem("viewAcademicBtnVisible");
+    if (viewAcademicBtnVisible === "true") {
+      viewAcademicBtn.style.display = "block";
+      saveChangesBtn.style.display = "none";
+    } else {
+      viewAcademicBtn.style.display = "none";
+      saveChangesBtn.style.display = "block";
+    }
 
-      // Add event listener to the academic details button
-      academicDetailsBtn.addEventListener("click", function() {
-          // Show the view academic details button
-          viewAcademicBtn.style.display = "block";
-          // Hide the save changes button
-          saveChangesBtn.style.display = "none";
-          // Store visibility state in local storage
-          localStorage.setItem("viewAcademicBtnVisible", "true");
-      });
+    // Add event listener to the academic details button
+    academicDetailsBtn.addEventListener("click", function () {
+      // Show the view academic details button
+      viewAcademicBtn.style.display = "block";
+      // Hide the save changes button
+      saveChangesBtn.style.display = "none";
+      // Store visibility state in local storage
+      localStorage.setItem("viewAcademicBtnVisible", "true");
+    });
 
-      // Add event listener to the personal details button
-      personalDetailsBtn.addEventListener("click", function() {
-          // Hide the view academic details button
-          viewAcademicBtn.style.display = "none";
-          // Show the save changes button
-          saveChangesBtn.style.display = "block";
-          // Store visibility state in local storage
-          localStorage.setItem("viewAcademicBtnVisible", "false");
-      });
+    // Add event listener to the personal details button
+    personalDetailsBtn.addEventListener("click", function () {
+      // Hide the view academic details button
+      viewAcademicBtn.style.display = "none";
+      // Show the save changes button
+      saveChangesBtn.style.display = "block";
+      // Store visibility state in local storage
+      localStorage.setItem("viewAcademicBtnVisible", "false");
+    });
   });
 </script>
+
 
 </body>
 </html>
