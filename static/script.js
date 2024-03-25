@@ -155,21 +155,21 @@ document.getElementById("academicChanges").addEventListener("submit", function (
 });
 
 window.botpressWebChat.init({
-  "composerPlaceholder": "Chat with bot",
-  "botConversationDescription": "Say 'Hi' ",
-  "botId": "46194b2c-bdc1-475c-989a-5f1bc81be3de",
-  "hostUrl": "https://cdn.botpress.cloud/webchat/v1",
-  "messagingUrl": "https://messaging.botpress.cloud",
-  "clientId": "46194b2c-bdc1-475c-989a-5f1bc81be3de",
-  "webhookId": "58fc4575-da25-4d25-b6aa-480a59cfb13a",
-  "lazySocket": true,
-  "themeName": "prism",
-  "frontendVersion": "v1",
-  "useSessionStorage": true,
-  "enableConversationDeletion": true,
-  "theme": "prism",
-  "themeColor": "#2563eb"
-});
+      "composerPlaceholder": "Chat with bot",
+      "botConversationDescription": "This chatbot was built surprisingly fast with Botpress",
+      "botId": "46194b2c-bdc1-475c-989a-5f1bc81be3de",
+      "hostUrl": "https://cdn.botpress.cloud/webchat/v1",
+      "messagingUrl": "https://messaging.botpress.cloud",
+      "clientId": "46194b2c-bdc1-475c-989a-5f1bc81be3de",
+      "webhookId": "58fc4575-da25-4d25-b6aa-480a59cfb13a",
+      "lazySocket": true,
+      "themeName": "prism",
+      "frontendVersion": "v1",
+      "useSessionStorage": true,
+      "enableConversationDeletion": true,
+      "theme": "prism",
+      "themeColor": "#2563eb"
+  });
 
 const menteeSearchInput = document.getElementById("menteeSearch");
     const menteeTable = document.querySelector("table");
