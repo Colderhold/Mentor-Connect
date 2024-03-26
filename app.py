@@ -1,18 +1,21 @@
 import os
-from flask import Flask, session, render_template, request, redirect,url_for, flash
+from flask import Flask, session, render_template, request, redirect,url_for, flash, jsonify
 from flask_session import Session
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
-from random import randint
-from sqlalchemy import create_engine, func
-from sqlalchemy import and_
-from sqlalchemy.orm import scoped_session, sessionmaker
 from models import *
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import qrcode
 from flask import Flask, render_template
-import qrcode
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+import base64
+
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -600,3 +603,172 @@ def addResource():
     db.session.commit()
     flash("Resource has been added!")
     return redirect(url_for('resources'))
+
+
+@app.route("/analysis", methods=["GET", "POST"])
+def analysis():
+    username = session.get('username')
+
+    # SQL query to retrieve CGPA for the logged-in mentee
+    query = f"SELECT distinct cgpa FROM mentee_grades WHERE username = '{username}'"
+    
+    # Retrieve data from SQL database into a Pandas DataFrame
+    df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+    
+    # Plot data
+    plt.plot(range(1, len(df) + 1), df['cgpa'], marker='o', color='b', linestyle='-')
+
+    # Add labels and title
+    plt.xlabel('Semester')
+    plt.ylabel('CGPA (out of 10)')
+    plt.title('Mentee CGPA Progress')
+
+    plt.xticks(range(1, len(df) + 1))  # Set x-axis ticks to match semester numbers
+    plt.yticks(range(12))
+
+    for i, cgpa in enumerate(df['cgpa']):
+       plt.annotate(f'CGPA: {cgpa:.2f}', (i + 1, cgpa), textcoords="offset points", xytext=(0,10), ha='center')
+    
+    # Convert plot to base64-encoded image
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plot_data = base64.b64encode(buffer.read()).decode()
+
+    # Close plot to free up resources
+    plt.close()
+    
+    if request.method == "POST":
+        # Retrieve selected semester from the form
+        selected_semester = request.form.get("semester")
+
+        # Query the database for subject contributions for the selected semester
+        query = f"SELECT subject, total_marks FROM mentee_grades WHERE username = '{username}' and sem = '{selected_semester}'"
+        df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+
+        # Calculate the contribution of each subject based on the total marks
+        total_marks_semester = df['total_marks'].sum()
+        subject_contributions = df.groupby('subject')['total_marks'].sum() / total_marks_semester
+
+        # Plot the data as a pie chart
+        plt.figure(figsize=(8, 8))
+        plt.pie(subject_contributions, labels=subject_contributions.index, autopct='%1.1f%%', startangle=140)
+        plt.title(f'Contribution of Subjects in Semester {selected_semester}')
+
+        # Convert plot to base64-encoded image
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        plot_data1 = base64.b64encode(buffer.read()).decode()
+        plt.close()
+        
+        query = f"SELECT subject, marks_ia, marks_sem FROM mentee_grades WHERE username = '{username}' and sem = '{selected_semester}'"
+
+        # Retrieve data from SQL database into a Pandas DataFrame
+        df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+
+        # Plot data
+        plt.figure(figsize=(12, 6))
+
+        # Set the width of the bars
+        bar_width = 0.35
+
+        # Set the positions of the bars on the x-axis
+        index = np.arange(len(df))
+
+        # Plot bars for internal assessment marks
+        plt.bar(index, df['marks_ia'], bar_width, label='Internal Assessment Marks')
+
+        # Plot bars for semester marks
+        plt.bar(index + bar_width, df['marks_sem'], bar_width, label='Semester Marks')
+
+        # Add labels and title
+        plt.xlabel('Subjects')
+        plt.ylabel('Marks')
+        plt.title(f'Comparison of Internal Assessment Marks and Semester Marks for Semester {selected_semester}')
+        plt.xticks(index + bar_width / 2, df['subject'])
+        plt.legend()
+
+        # Set the upper limit on the y-axis
+        plt.ylim(0, 80)
+
+        # Customize plot (optional)
+        plt.grid(True, axis='y')
+
+        # Convert plot to base64-encoded image
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        plot_data3 = base64.b64encode(buffer.read()).decode()
+
+        # Close plot to free up resources
+        plt.close()
+
+        return render_template('analysis.html', plot_data=plot_data, initial_plot_data=plot_data1, plot_data3=plot_data3, selected_semester=selected_semester)
+
+    else:
+        selected_semester = request.form.get("semester")
+        # Render the page with the initial pie chart data for the first semester
+        # Query the database for subject contributions for the first semester
+        query = f"SELECT subject, total_marks FROM mentee_grades WHERE username = '{username}' and sem = '1'"
+        df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+
+        # Calculate the contribution of each subject based on the total marks
+        total_marks_semester = df['total_marks'].sum()
+        subject_contributions = df.groupby('subject')['total_marks'].sum() / total_marks_semester
+
+        # Plot the data as a pie chart
+        plt.figure(figsize=(8, 8))
+        plt.pie(subject_contributions, labels=subject_contributions.index, autopct='%1.1f%%', startangle=140)
+        plt.title('Contribution of Subjects in Semester 1')
+
+        # Convert plot to base64-encoded image
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        initial_plot_data = base64.b64encode(buffer.read()).decode()
+        plt.close()
+        
+        query = f"SELECT subject, marks_ia, marks_sem FROM mentee_grades WHERE username = '{username}' and sem = '1'"
+
+        # Retrieve data from SQL database into a Pandas DataFrame
+        df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+
+        # Plot data
+        plt.figure(figsize=(12, 6))
+
+        # Set the width of the bars
+        bar_width = 0.35
+
+        # Set the positions of the bars on the x-axis
+        index = np.arange(len(df))
+
+        # Plot bars for internal assessment marks
+        plt.bar(index, df['marks_ia'], bar_width, label='Internal Assessment Marks')
+
+        # Plot bars for semester marks
+        plt.bar(index + bar_width, df['marks_sem'], bar_width, label='Semester Marks')
+
+        # Add labels and title
+        plt.xlabel('Subjects')
+        plt.ylabel('Marks')
+        plt.title(f'Comparison of Internal Assessment Marks and Semester Marks for Semester 1')
+        plt.xticks(index + bar_width / 2, df['subject'])
+        plt.legend()
+
+        # Set the upper limit on the y-axis
+        plt.ylim(0, 80)
+
+        # Customize plot (optional)
+        plt.grid(True, axis='y')
+
+        # Convert plot to base64-encoded image
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        plot_data3 = base64.b64encode(buffer.read()).decode()
+
+        # Close plot to free up resources
+        plt.close()
+        
+        return render_template('analysis.html', plot_data=plot_data, initial_plot_data=initial_plot_data, plot_data3=plot_data3, selected_semester=selected_semester)

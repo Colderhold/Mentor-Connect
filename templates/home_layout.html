@@ -65,6 +65,7 @@
                 <li>
                     {% if session['user_type'] == 'mentee'  %}
                     <a href="{{url_for('resources')}}" >Resources</a>
+                    <a href="{{url_for('analysis')}}" >Analysis</a>
                   {% else %}
                     <a href="{{url_for('mentee')}}">Mentees</a>
                   {% endif %}

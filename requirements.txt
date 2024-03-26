@@ -17,3 +17,5 @@ mysql-connector-python
 qrcode
 Flask-Mail
 Flask-Redis
+pandas
+matplotlib
