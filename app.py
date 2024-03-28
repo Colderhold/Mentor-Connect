@@ -610,7 +610,7 @@ def analysis():
     username = session.get('username')
 
     # SQL query to retrieve CGPA for the logged-in mentee
-    query = f"SELECT distinct cgpa FROM mentee_grades WHERE username = '{username}'"
+    query = f"SELECT MIN(cgpa) as cgpa FROM mentee_grades WHERE username = '{username}' GROUP BY sem ORDER BY sem"
     
     # Retrieve data from SQL database into a Pandas DataFrame
     df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
