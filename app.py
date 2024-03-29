@@ -605,6 +605,72 @@ def addResource():
     return redirect(url_for('resources'))
 
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        
+        # Check if the email exists in the Mentee or Mentor table
+        if Mentee.query.filter_by(email=email).first() or Mentor.query.filter_by(email=email).first():
+            token = s.dumps(email, salt='email-confirm')
+            
+            msg = Message('Reset Password', sender='your_email@gmail.com', recipients=[email])
+            
+            link = url_for('reset_password', token=token, _external=True)
+
+            # Modify the body to include the link with target="_blank"
+            html_content = '<html><body>Click <a href="{}" target="_blank">here</a> to reset your password.</body></html>'.format(link)
+
+            # Set the HTML content for the message
+            msg.html = html_content
+
+            # Send the message
+            mail.send(msg)
+                    
+            flash('Password reset email sent successfully!')
+            return redirect(url_for('forgot_password'))
+        else:
+            flash('Error: Email not found!')
+            return redirect(url_for('forgot_password'))
+    return render_template('forgot_password.html')
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if request.method == 'GET':
+        try:
+            email = s.loads(token, salt='email-confirm', max_age=3600)  # Max age for the token: 1 hour
+            return render_template('reset_password.html', email=email)
+        except:
+            flash('Error: The link is invalid or expired.')
+            return redirect(url_for('forgot_password'))
+    else:
+        # Handle password reset logic here
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+        
+        if new_password != confirm_password:
+            flash('Error: Passwords do not match!')
+            return redirect(url_for('reset_password', token=token))
+        else:
+            try:
+                email = s.loads(token, salt='email-confirm', max_age=3600)
+                user = Mentee.query.filter_by(email=email).first()
+                if user:
+                    # Update the user's password
+                    user.password = confirm_password
+                    db.session.commit()
+                    
+                    flash('Password reset successful!')
+                    return redirect(url_for('login'))  # Redirect to login page after successful password reset
+                else:
+                    flash('Error: User not found!')
+                    return redirect(url_for('forgot_password'))
+            except:
+                flash('Error: The link is invalid or expired.')
+                return redirect(url_for('forgot_password'))
+
+
 @app.route("/analysis", methods=["GET", "POST"])
 def analysis():
     username = session.get('username')

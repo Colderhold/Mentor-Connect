@@ -201,3 +201,8 @@ a:link {
 a:hover {
   color: black;
 }
+
+.custom-link {
+  color: #007bff; /* Set the color to blue */
+  text-decoration: none; /* Remove underlines */
+}

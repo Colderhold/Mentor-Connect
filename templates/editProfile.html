@@ -29,6 +29,7 @@
     <form action="{{ url_for('profileChanges') }}" method="post" id="editProfile" enctype="multipart/form-data">
     </form>
 
+    <br>
     {% if session["user_type"] == "mentor" %}
     <span class="profile-picture">
       <img id="profilePicture" src="{{ url_for('static', filename=session['pic']) }}" alt="Profile Picture">

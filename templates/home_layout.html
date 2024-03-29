@@ -2,9 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-
-
+    <title>{% block title %}{% endblock %}</title>    
 
     <!--Font stylesheet here-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -43,14 +41,23 @@
     <div class="wrapper">
         <!-- Sidebar Holder -->
         <nav id="sidebar">
-          <button class="btn btn-light toggle-sidebar" id="sidebarCollapse">
-            <i class="fas fa-arrow-left"></i>
-        </button>
+          <br>
+          <br>
             <div class="sidebar-header">
               <br>
               <br>
                 <h3>QRConnect</h3>
             </div>
+
+            {% if session["user_type"] == "mentor" %}
+            <span class="profile-picture1">
+              <img style='background-color: #004c4c;' id="profilePicture" src="{{ url_for('static', filename=session['pic']) }}" alt="Profile Picture">
+            </span>
+            {%else%}
+            <span class="profile-picture1">
+              <img style='background-color: #004c4c;' id="profilePicture" src="{{ url_for('static', filename=session['pic']) }}" alt="Profile Picture">
+            </span>
+            {% endif %}
 
             <ul class="list-unstyled components">
 
