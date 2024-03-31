@@ -421,13 +421,6 @@
   </div><!-- /.col -->
 </div><!-- /.row -->
 
-<style>
-  #profilePicture {
-      max-width: 100%;
-      max-height: 200px; /* You can adjust the max height as needed */
-  }
-</style>
-
 {% if session["user_type"] == "mentee" %}
 <div id="academic_details" style='display: none;'>
   <div class="space-20"></div>
@@ -459,6 +452,7 @@
     
             .add-row-button, .delete-row-button {
                 display: inline-block;
+                border-radius: 20px;
                 margin: 10px auto;
                 padding: 10px;
                 background-color: #007bff;
@@ -550,7 +544,7 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
                 <div style="padding-left: 8%;">
-                    <button class="btn btn-outline-success" type="submit">Submit</button>
+                    <button class="btn btn-outline-success" style='border-radius: 20px;' type="submit">Submit</button>
                 </div>
                 <div class="button-container" style="padding-right: 8%;">
                     <button class="add-row-button" onclick="addRow()">Add Row</button>
@@ -613,43 +607,40 @@
 
 <script>
   document.getElementById("academicChanges").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the form from submitting initially
-
     // Validate each row before submitting the form
-    if (validateRows()) {
-      // If all rows are valid, submit the form
-      this.submit();
-    } else {
-      // If any row is invalid, display an error message
-      alert("Error: Please fill in all fields for each row.");
+    if (!validateRows()) {
+        // If any row is invalid, prevent the form submission
+        event.preventDefault();
+        // Display an error message
+        alert("Error: Please fill in all fields for each row.");
     }
-  });
+});
 
-  function validateRows() {
+function validateRows() {
     // Get all rows in the table body
-    const rows = document.querySelectorAll('#mentee-grades1 tbody tr');
+    const rows = document.querySelectorAll('#mentee-grades tbody tr');
 
     // Iterate over each row and validate its input fields
     for (let row of rows) {
-      // Get input fields in the current row
-      const inputs = row.querySelectorAll('input[type="text"]');
+        // Get input fields in the current row
+        const inputs = row.querySelectorAll('input[type="text"]');
 
-      // Check if any input field in the row is empty
-      for (let input of inputs) {
-        if (!input.value.trim()) {
-          return false; // Return false if any field in the row is empty
+        // Check if any input field in the row is empty
+        for (let input of inputs) {
+            if (!input.value.trim()) {
+                return false; // Return false if any field in the row is empty
+            }
         }
-      }
     }
 
     return true; // Return true if all rows have all fields filled in
-  }
+}
 
   function addRow() {
     const rowCountInput = document.getElementById('row-count');
     let rowCount = parseInt(rowCountInput.value);
 
-    const tableBody = document.querySelector('#mentee-grades1 tbody');
+    const tableBody = document.querySelector('#mentee-grades tbody');
 
     // Check if table body exists, create it if not
     if (!tableBody) {
@@ -671,9 +662,9 @@
     // Increment the row count and update the hidden input field
     rowCount++;
     rowCountInput.value = rowCount;
-  }
+}
 
-  function deleteRow() {
+function deleteRow() {
     const rowCountInput = document.getElementById('row-count');
     let rowCount = parseInt(rowCountInput.value);
 
@@ -685,14 +676,14 @@
       rowCountInput.value = rowCount;
 
       // Find the table's tbody
-      const tableBody = document.querySelector('#mentee-grades1 tbody');
+      const tableBody = document.querySelector('#mentee-grades tbody');
 
       // Remove the last row
       if (tableBody && tableBody.children.length > 0) {
         tableBody.removeChild(tableBody.lastElementChild);
       }
     }
-  }
+}
 
   $(document).ready(function () {
     $("#personal_details-btn").click(function () {

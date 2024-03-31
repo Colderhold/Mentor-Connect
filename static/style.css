@@ -206,3 +206,18 @@ a:hover {
   color: #007bff; /* Set the color to blue */
   text-decoration: none; /* Remove underlines */
 }
+
+#profilePicture {
+    max-width: 100%;
+	border-radius: 50%;
+    border: 3px solid #000000;
+    background-color: #004c4c;
+	max-height: 200px; /* You can adjust the max height as needed */
+}
+
+.profile-picture1 {
+    max-width: 100%;
+	border-radius: 50%;
+	max-height: 200px;
+    background: #004c4c; /* You can adjust the max height as needed */
+}

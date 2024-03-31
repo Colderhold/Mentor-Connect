@@ -7,6 +7,15 @@
 {% block body %}
 <h2 style="text-align:center;">Add Resources here</h2>
 
+<br>
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Search by Resource Title" id="searchInput">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+  </div>
+</div>
+<br>
+
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Add a resource</button>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -42,10 +51,6 @@
     </div>
   </div>
 </div>
-
-
-
-
 
 <div class="space-20"></div>
 
@@ -126,7 +131,29 @@
 
 </div>
 
+<script>
+  // Function to filter resources based on input text
+  function filterResources() {
+    var input, filter, cards, cardTitle, i;
+    input = document.getElementById('searchInput');
+    filter = input.value.toUpperCase();
+    cards = document.getElementsByClassName('card');
+    for (i = 0; i < cards.length; i++) {
+      cardTitle = cards[i].querySelector('.card-title');
+      if (cardTitle.innerText.toUpperCase().indexOf(filter) > -1) {
+        cards[i].style.display = '';
+      } else {
+        cards[i].style.display = 'none';
+      }
+    }
+  }
 
+  // Event listener for search button click
+  document.getElementById('searchButton').addEventListener('click', filterResources);
+
+  // Event listener for input field change
+  document.getElementById('searchInput').addEventListener('input', filterResources);
+</script>
 
 {% endblock %}
 
