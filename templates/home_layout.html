@@ -44,8 +44,6 @@
           <br>
           <br>
             <div class="sidebar-header">
-              <br>
-              <br>
                 <h3>QRConnect</h3>
             </div>
 
@@ -76,16 +74,14 @@
                   {% else %}
                     <a href="{{url_for('mentee')}}">Mentees</a>
                   {% endif %}
+                  <a href="{{url_for('network')}}" >Network</a>
                 </li>
             </ul>
             <ul class="list-unstyled CTAs">
                 <li>
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" class="brand_logo" alt="Logo" style="width:200px">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" class="brand_logo" alt="Logo" style="width:150px">
                 </li>
             </ul>
-
-
-
         </nav>
 
         <!-- Page Content Holder -->
@@ -146,7 +142,6 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
       <script src="script.js"></script>
-
 
       <script>
         // Function to toggle the collapse element

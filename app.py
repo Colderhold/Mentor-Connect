@@ -58,7 +58,7 @@ def validateUser():
             user_data = Mentor.query.filter_by(username=username).one()
         except:
             #not in the mentor or mentee table
-            flash("Username does not exist")
+            flash("Error: Username does not exist")
             return redirect(url_for('login'))
         else:
             user_data_fetched = True
@@ -79,7 +79,7 @@ def validateUser():
                 session.update({"job":user_data.job, "meetStudents":user_data.meetStudents, "workExp":user_data.workExp})
                 return redirect(url_for('mentorHome'))
         else:
-            flash("Incorrect password or username, please try again!")
+            flash("Error: Incorrect password or username, please try again!")
             return redirect(url_for('login'))
 
 
@@ -195,11 +195,11 @@ def registerUser():
         existing_mentor = Mentor.query.filter_by(username=username).first()
         
         if existing_mentor:
-            flash("Username already exists. Please choose a different username.")
+            flash("Error: Username already exists. Please choose a different username.")
             return redirect(url_for('register'))
         
         if not (8 <= len(password) <= 20 and any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c.isdigit() for c in password)):
-            flash("Password must be 8-20 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.")
+            flash("Error: Password must be 8-20 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.")
             return redirect(url_for('register'))
         
         new_mentor = Mentor(fname=fname, lname=lname, username=username, profile_pic= "mentor_pic.png" ,password=password, email=email, job=job, cv_help=cv_help, meetStudents= meet_students, mockInterview=mockInterview, workExp=workExp)
@@ -245,7 +245,7 @@ def registerUser():
         existing_mentee = Mentee.query.filter_by(username=username).first()
     
         if existing_mentee:
-            flash("Username already exists. Please choose a different username.")
+            flash("Error: Username already exists. Please choose a different username.")
             return redirect(url_for('register'))
     
         if not (8 <= len(password) <= 20 and any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c.isdigit() for c in password)):
@@ -594,7 +594,7 @@ def addResource():
         file.save(resource_path)
     else:
         # If they haven't added a resource, flash them a message
-        flash("Please select a file to add as a resource")
+        flash("Error: Please select a file to add as a resource")
         return redirect(url_for('resources'))
 
     NUMBER_OF_RESOURCES = len(Resource.query.filter_by().all())
