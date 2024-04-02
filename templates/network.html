@@ -16,19 +16,21 @@
     {% if mentee_data %}
       {% for mentee in mentee_data %}
         <div class="col-sm mt-4">
-          <div class="flip-card">
-            <div class="flip-card-inner">
-              <div class="flip-card-front" style="background-color: #006666;">
-                {% set file_path = ["img/", mentee.profile_pic]|join %}
-                <img src="{{ url_for('static', filename='img/' + mentee.profile_pic) }}" alt="Avatar" style="max-height:230px;width:100%;padding:10px; border-radius: 50%;">
-                <h5 style="color:black;">{{mentee.fname}} {{mentee.lname}}</h5>
-                
-                <button type="button" class="btn btn-light" data-toggle="modal" data-target="#{{mentee.username}}">
-                  View Profile
-                </button>
-              </div>
+          <a href="#" data-toggle="modal" data-target="#{{ mentee.username }}">
+            <div class="col-sm mt-4">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front" style="background-color: #006666;">
+                            {% set file_path = ["img/", mentee.profile_pic]|join %}
+                            <img src="{{ url_for('static', filename='img/' + mentee.profile_pic) }}" alt="Avatar" style="max-height:230px;width:100%;padding:10px; border-radius: 50%;">
+                            <h5 style="color:black; font-weight: 700;">{{ mentee.fname }} {{ mentee.lname }}</h5>
+                            
+                            <button type="button" class="btn btn-light">View Profile</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+        </a>        
         </div>
 
       <!-- Modal -->
@@ -59,11 +61,30 @@
                           </center>
                           <hr>
                           <center>
-                          <p class="text-left" style="color:black;"><strong>Bio: </strong><br>
-                            {{mentee.bio}}
-                          <br>
+                          <p class="text-left" style="color:black; font-weight: 400;"><strong class='font-weight: 500;'>Year of Study: </strong>
+                            {{mentee.year}}
                           <hr>
-                          <p class="text-left" style="color:black;"><strong>Job: </strong>Studying</p>
+
+                          <p class="text-left" style="color:black; font-weight: 400;"><strong>Branch: </strong>
+                            {{mentee.branch}}
+                          <hr>
+
+                          <p class="text-left" style="color:black; font-weight: 400;"><strong>Batch: </strong>
+                            {{mentee.batch}}
+                          <hr>
+
+                          <p class="text-left" style="color:black; font-weight: 400;"><strong>Email: </strong>
+                            {{mentee.email}}
+                          <hr>
+
+                          <p class="text-left" style="color: black; font-weight: 400;">
+                            <strong>LinkedIn Profile: </strong>
+                            <a href="{{ mentee.linkedin_pro }}" target="_blank">{{ mentee.linkedin_pro }}</a>
+                            <hr>
+
+                          <p class="text-left" style="color:black; font-weight: 400;"><strong>Bio: </strong>
+                            {{mentee.bio}}
+                          <hr>
 
                           <br>
                           </center>

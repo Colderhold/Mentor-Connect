@@ -103,9 +103,9 @@
 
       {% if session["user_type"] == "mentee" %}
       <div class="profile-info-row">
-        <div class="profile-info-name"> Graduation Year </div>
+        <div class="profile-info-name"> Year of Study </div>
         <div class="profile-info-value">
-          <input type="text" form="editProfile" name="year" class="form-control" value="{{session['year'] or '' }}" placeholder = 'Enter year *'>
+          <input type="text" form="editProfile" name="year" class="form-control" value="{{session['year'] or '' }}" placeholder = 'Enter year of study *'>
         </div>
       </div>
       {%endif%}

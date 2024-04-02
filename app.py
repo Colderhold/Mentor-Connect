@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session, render_template, request, redirect,url_for, flash, jsonify
+from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from flask_session import Session
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
@@ -333,6 +333,9 @@ def deleteResource(id):
 
 @app.route("/network", methods=["GET", "POST"])
 def network():
+    if session.get('user_type') == 'mentee':
+        return redirect(url_for('menteeHome'))
+    
     mentee_data = session["mentee_data"] = True
     mentor_data = session["mentor_data"] = True
     if request.method == 'POST':
