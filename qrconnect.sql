@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 28, 2024 at 08:28 PM
+-- Generation Time: Apr 03, 2024 at 12:02 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -91,10 +91,11 @@ CREATE TABLE `mentees` (
 --
 
 INSERT INTO `mentees` (`fname`, `lname`, `prn_num`, `dob`, `username`, `year`, `password`, `branch`, `batch`, `email`, `email_verified`, `mobile_no`, `address`, `blood_grp`, `linkedin_pro`, `profile_pic`, `father_name`, `father_occupation`, `father_mobile_no`, `father_email`, `mother_name`, `mother_occupation`, `mother_mobile_no`, `mother_email`, `hobbies`, `strengths`, `weakness`, `goals`, `ssc`, `hsc`, `cet_jee`, `bio`, `cv_help`, `meetAlumni`, `mockInterview`) VALUES
-('Aayush', 'Shah', '121A1098', '', 'Aayush', '', '1234', 'Computer Engineering', 'D2', 'aayushsce121@siesgst.ac.in', 0, '0', '', '', 'https://www.linkedin.com/in/aayush-shah-42370b1b7', 'aayush.jpg', '', '', '0', '', '', '', '0', '', '', '', '', '', 0, 0, 0, 'Bio has not been edited by the user', 1, 1, 1),
-('Dhruv', 'Shetty', '121A1101', '25/02/2003', 'dhruv', 'Third Year', 'dhruv', 'Computer Engineering', 'D2', '', 0, '9324212493', 'Sanpada', 'O+ve', 'http://linkedin.com/in/dhruv-shetty-org/', 'dp.jpg', 'Nagesh Shetty', 'Service', '9892562959', 'a@b', 'Saroj Shetty', 'Housewife', '8850283614', 'a@b', 'Cricket', 'Good in Programming', 'Overthinker', 'Getting a Good Job', 92.8, 91.67, 95.019, 'Bio has not been edited by the user', 0, 0, 0),
-('Pranjal', 'Patil', '121A1082', '31/07/2003', 'pran', '2025', '123', 'Computer Engineering', 'D1', 'pranjalpce121@siesgst.ac.in', 0, '2147483647', 'CBD Belapur', 'B+ve', 'linkedin.com/in/pranjalp', 'mentee_pic.png', 'B.S. Patil', 'Service', '2147483647', 'bspatil1970@gmail.com', 'Vasanti B Patil', 'Homemaker', '2147483647', 'pvasanti555@gmail.com', 'Trekking', 'Goal Oriented', 'Overthinking', 'Getting good placement', 96, 80, 88.98, 'Bio has not been edited by the user', 0, 0, 0),
-('Purva', 'Ambre', '121A1085', '12/05/2003', 'purva', '2025', 'ymca', 'Computer Engineering', 'D1', 'purvasace121@siesgst.ac.in', 0, '2147483647', 'CBD Belapur', 'B+ve', 'https://www.linkedin.com/in/purva-ambre', 'purva.jpg', 'Sanjay Ambre', 'Service', '2147483647', 'sanjay.ambre@gmail.com', 'Amarjaya Ambre', 'Teacher', '2147483647', 'amarjayaambre86@gmail.com', 'Dancing', 'Calm in panic situation.', 'Procrastination', 'Going to Germany.', 88.9, 83.4, 93.2, 'Bio has not been edited by the user', 0, 0, 0);
+('Aayush', 'Shah', '121A1098', '19/11/2002', 'Aayush', 'third year', '1234', 'Computer Engineering', 'D2', 'aayushsce121@siesgst.ac.in', 1, '8465975231', 'Nerul, Navi Mumbai', 'O(-ve)', 'https://www.linkedin.com/in/aayush-shah-42370b1b7', 'Aayush_Image.jpg', 'Rajendra Shah', 'postmaster', '7478965274', 'rajendrashah@gmail.com', 'Anjana Shah', 'Housewife', '7768945231', 'anjanashah@gmail.com', 'play cricket and badminton', 'strong focus and determination', 'stage fear', 'securing placement', 90, 88, 89, 'Bio has not been edited by the user', 1, 1, 1),
+('Dhruv', 'Shetty', '121A1101', '25/02/2003', 'dhruv', 'Third Year', 'dhruv', 'Computer Engineering', 'D2', 'dhruvnsce121@siesgst.ac.in', 1, '9324212493', 'Sanpada', 'O+ve', 'http://linkedin.com/in/dhruv-shetty-org/', 'dp.jpg', 'Nagesh Shetty', 'Service', '9892562959', 'a@b', 'Saroj Shetty', 'Housewife', '8850283614', 'a@b', 'Cricket', 'Good in Programming', 'Overthinker', 'Getting a Good Job', 92.8, 91.67, 95.019, 'Bio has not been edited by the user', 0, 0, 0),
+('Pranjal', 'Patil', '121A1082', '31/07/2003', 'pran', 'Third Year', '123', 'Computer Engineering', 'D1', 'pranjalpce121@siesgst.ac.in', 1, '2147483647', 'CBD Belapur', 'B+ve', 'linkedin.com/in/pranjalp', 'pranjal.jpeg', 'B.S. Patil', 'Service', '2147483647', 'bspatil1970@gmail.com', 'Vasanti B Patil', 'Homemaker', '2147483647', 'pvasanti555@gmail.com', 'Trekking', 'Goal Oriented', 'Overthinking', 'Getting good placement', 96, 80, 88.98, 'Bio has not been edited by the user', 0, 0, 0),
+('Purva', 'Ambre', '121A1085', '12/05/2003', 'purva', 'Third Year', 'ymca', 'Computer Engineering', 'D1', 'purvasace121@siesgst.ac.in', 1, '2147483647', 'CBD Belapur', 'B+ve', 'https://www.linkedin.com/in/purva-ambre', 'purva.jpeg', 'Sanjay Ambre', 'Service', '2147483647', 'sanjay.ambre@gmail.com', 'Amarjaya Ambre', 'Teacher', '2147483647', 'amarjayaambre86@gmail.com', 'Dancing', 'Calm in panic situation.', 'Procrastination', 'Going to Germany.', 88.9, 83.4, 93.2, 'Bio has not been edited by the user', 0, 0, 0),
+('Tarun', 'Kurakula', '', '', 'tarun', '', 'Abcd@1234', '', '', 'rirese5761@ekposta.com', 1, '', '', '', '', 'mentee_pic.png', '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, 'Bio has not been edited by the user', 0, 0, 0);
 
 -- --------------------------------------------------------
 
