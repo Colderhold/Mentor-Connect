@@ -68,19 +68,27 @@
         <tr>
             <td>{{ mentees[i] }}</td>
             <td>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#resourcesModal{{ i }}">
-                    Open Resource Preview
+                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#remarkModal{{ i }}">
+                    Remarks
                 </button>
 
-                <button type="button" class="btn btn-primary" onclick="window.location.href = '{{ url_for('view_profile', username=mentees[i]) }}'">
-                    View Mentee Profile
+                <button type="button" class="btn btn-outline-primary" onclick="window.location.href = '{{ url_for('generate_report', mentee_username=mentees[i]) }}'">
+                    Report
+                </button>                              
+
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#resourcesModal{{ i }}">
+                    Resource Preview
                 </button>
 
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#academicModal{{ i }}">
-                    View Academic Details
+                <button type="button" class="btn btn-outline-primary" onclick="window.location.href = '{{ url_for('view_profile', username=mentees[i]) }}'">
+                    Mentee Profile
                 </button>
 
-                <button type="button" class="btn btn-danger delete-mentee-button" data-toggle="modal" data-target="#deleteMenteeModal{{ i }}">
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#academicModal{{ i }}">
+                    Academic Details
+                </button>
+
+                <button type="button" class="btn btn-outline-danger delete-mentee-button" data-toggle="modal" data-target="#deleteMenteeModal{{ i }}">
                     Remove Mentee
                 </button>
             </td>
@@ -193,6 +201,31 @@
 {% endfor %}
 
 
+{% for i in range(mentees|length) %}
+<!-- Mentee Remarks Modal -->
+<div class="modal fade" id="remarkModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="remarkModalLabel{{ i }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="remarkModalLabel{{ i }}">Add Remarks for {{ mentees[i] }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('update_remarks', mentee=mentees[i]) }}" id="remarkForm{{ i }}">
+                    <input type="text" name="remark" class="form-control" id="remark" placeholder="Add remark..." value="{{ mentees_remarks[i] }}" required>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="remarkForm{{ i }}" class="btn btn-success">Save Remark</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 
 <script>
     // Get the input field and table
@@ -218,5 +251,5 @@
 {% endblock %}
 
 {% block right_button %}
-<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-danger" onclick="window.location.href='{{ url_for('editProfile') }}';">Edit Profile</button>
+<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

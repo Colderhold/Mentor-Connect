@@ -7,7 +7,7 @@
     <!--Font stylesheet here-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--JQuery here-->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!--Bootstrap here css and js-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -44,14 +44,14 @@
           <br>
           <br>
             <div class="sidebar-header">
-                <h3>QRConnect</h3>
+                <h3>SkillSpace</h3>
             </div>
 
             {% if session["user_type"] == "mentor" %}
             <span class="profile-picture1">
               <img style='background-color: #004c4c;' id="profilePicture" src="{{ url_for('static', filename=session['pic']) }}" alt="Profile Picture">
             </span>
-            {%else%}
+            {% else %}
             <span class="profile-picture1">
               <img style='background-color: #004c4c;' id="profilePicture" src="{{ url_for('static', filename=session['pic']) }}" alt="Profile Picture">
             </span>
@@ -102,7 +102,7 @@
                       <ul class="nav navbar-nav ml-auto">
                         {% block right_button %}
                         {% endblock %}
-                          <button type="button" class="btn btn-danger btn-logout" onclick="window.location.href='{{ url_for('log_out') }}';">Log Out</button>
+                          <button type="button" class="btn btn-outline-danger btn-logout" onclick="window.location.href='{{ url_for('log_out') }}';">Log Out</button>
                       </ul>
                   </div>
               </div>
@@ -140,8 +140,6 @@
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
       <!-- jQuery Custom Scroller CDN -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
-
-      <script src="script.js"></script>
 
       <script>
         // Function to toggle the collapse element

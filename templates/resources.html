@@ -7,6 +7,7 @@
 {% block body %}
 <h2 style="text-align:center;">Add Resources here</h2>
 
+<div class="container">
 <br>
 <div class="input-group mb-3">
   <input type="text" class="form-control" placeholder="Search by Resource Title" id="searchInput">
@@ -130,6 +131,7 @@
   {% endfor %}
 
 </div>
+</div>
 
 <script>
   // Function to filter resources based on input text
@@ -158,5 +160,5 @@
 {% endblock %}
 
 {% block right_button %}
-<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-danger d-md-inline" onclick="window.location.href='{{ url_for('editProfile') }}';">Edit Profile</button>
+<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

@@ -19,3 +19,6 @@ Flask-Mail
 Flask-Redis
 pandas
 matplotlib
+reportlab
+pdfkit
+utils

@@ -11,11 +11,20 @@
 </form>
 
 <div class="container">
+
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search mentee" id="searchInput">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+    </div>
+</div>
+<br>
+
   <div class="row" style="padding-bottom: 20px;">
 
     {% if mentee_data %}
       {% for mentee in mentee_data %}
-        <div class="col-sm mt-4">
+        <div class="col-sm mt-4 mentee-card">
           <a href="#" data-toggle="modal" data-target="#{{ mentee.username }}">
             <div class="col-sm mt-4">
                 <div class="flip-card">
@@ -23,7 +32,7 @@
                         <div class="flip-card-front" style="background-color: #006666;">
                             {% set file_path = ["img/", mentee.profile_pic]|join %}
                             <img src="{{ url_for('static', filename='img/' + mentee.profile_pic) }}" alt="Avatar" style="max-height:230px;width:100%;padding:10px; border-radius: 50%;">
-                            <h5 style="color:black; font-weight: 700;">{{ mentee.fname }} {{ mentee.lname }}</h5>
+                            <h5 style="color:black; font-weight: 700;" class='mentee-name'>{{ mentee.fname }} {{ mentee.lname }}</h5>
                             
                             <button type="button" class="btn btn-light">View Profile</button>
                         </div>
@@ -89,12 +98,17 @@
                           <br>
                           </center>
             </div>
-            <div class="modal-footer" >
-
+            <div class="modal-footer">
+              <div class="col">
               <a href="#" class="fa fa-linkedin" style="text-align:center;"></a>
               <a href="#" class="fa fa-envelope-open-text" style="text-align:center;"></a>
-            </div>
+              </div>
+              <form action="{{ url_for('add_mentee') }}" method="post">
+                <input type="hidden" name="mentee_username" value="{{ mentee.username }}">
+                <button type="submit" class="btn btn-outline-success">Add Mentee</button>
+            </form>               
           </div>
+        </div>   
         </div>
       </div>
       {% endfor %}
@@ -105,6 +119,30 @@
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script>
+  // Function to filter mentees based on search input
+  function filterMentees() {
+      // Get the search input value
+      var searchText = document.getElementById('searchInput').value.toLowerCase();
+      // Get all mentee cards
+      var menteeCards = document.getElementsByClassName('mentee-card');
+      // Loop through all mentee cards
+      for (var i = 0; i < menteeCards.length; i++) {
+          // Get the mentee card's name
+          var menteeName = menteeCards[i].querySelector('.mentee-name').textContent.toLowerCase();
+          // Show the mentee card if the name matches the search text, otherwise hide it
+          if (menteeName.includes(searchText)) {
+              menteeCards[i].style.display = 'block';
+          } else {
+              menteeCards[i].style.display = 'none';
+          }
+      }
+  }
+
+  // Event listener for input in the search field
+  document.getElementById('searchInput').addEventListener('input', filterMentees);
+</script>
 
 <script type="text/javascript">
   $().ready(function(){
@@ -120,21 +158,10 @@
 
   });
 
-  function rotateCard(btn){
-      var $card = $(btn).closest('.card-container');
-      console.log($card);
-      if($card.hasClass('hover')){
-          $card.removeClass('hover');
-      } else {
-          $card.addClass('hover');
-      }
-  }
-
-
 </script>
 
 {% endblock %}
 
 {% block right_button %}
-<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-danger" onclick="window.location.href='{{ url_for('editProfile') }}';">Edit Profile</button>
+<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

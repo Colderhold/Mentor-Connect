@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 03, 2024 at 12:02 PM
+-- Generation Time: Apr 12, 2024 at 05:33 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -29,18 +29,19 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `assigned_mentees` (
   `mentee` varchar(255) NOT NULL,
-  `mentor` varchar(255) NOT NULL
+  `mentor` varchar(255) NOT NULL,
+  `remarks` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `assigned_mentees`
 --
 
-INSERT INTO `assigned_mentees` (`mentee`, `mentor`) VALUES
-('Aayush', 'rina'),
-('dhruv', 'rina'),
-('pran', 'rina'),
-('purva', 'rina');
+INSERT INTO `assigned_mentees` (`mentee`, `mentor`, `remarks`) VALUES
+('Aayush', 'rina', 'Can do better!!!'),
+('dhruv', 'rina', 'Can do better!!!'),
+('pran', 'jyoti', 'Can do better!!\r\n'),
+('purva', 'jyoti', 'Can do better!!');
 
 -- --------------------------------------------------------
 
@@ -94,8 +95,7 @@ INSERT INTO `mentees` (`fname`, `lname`, `prn_num`, `dob`, `username`, `year`, `
 ('Aayush', 'Shah', '121A1098', '19/11/2002', 'Aayush', 'third year', '1234', 'Computer Engineering', 'D2', 'aayushsce121@siesgst.ac.in', 1, '8465975231', 'Nerul, Navi Mumbai', 'O(-ve)', 'https://www.linkedin.com/in/aayush-shah-42370b1b7', 'Aayush_Image.jpg', 'Rajendra Shah', 'postmaster', '7478965274', 'rajendrashah@gmail.com', 'Anjana Shah', 'Housewife', '7768945231', 'anjanashah@gmail.com', 'play cricket and badminton', 'strong focus and determination', 'stage fear', 'securing placement', 90, 88, 89, 'Bio has not been edited by the user', 1, 1, 1),
 ('Dhruv', 'Shetty', '121A1101', '25/02/2003', 'dhruv', 'Third Year', 'dhruv', 'Computer Engineering', 'D2', 'dhruvnsce121@siesgst.ac.in', 1, '9324212493', 'Sanpada', 'O+ve', 'http://linkedin.com/in/dhruv-shetty-org/', 'dp.jpg', 'Nagesh Shetty', 'Service', '9892562959', 'a@b', 'Saroj Shetty', 'Housewife', '8850283614', 'a@b', 'Cricket', 'Good in Programming', 'Overthinker', 'Getting a Good Job', 92.8, 91.67, 95.019, 'Bio has not been edited by the user', 0, 0, 0),
 ('Pranjal', 'Patil', '121A1082', '31/07/2003', 'pran', 'Third Year', '123', 'Computer Engineering', 'D1', 'pranjalpce121@siesgst.ac.in', 1, '2147483647', 'CBD Belapur', 'B+ve', 'linkedin.com/in/pranjalp', 'pranjal.jpeg', 'B.S. Patil', 'Service', '2147483647', 'bspatil1970@gmail.com', 'Vasanti B Patil', 'Homemaker', '2147483647', 'pvasanti555@gmail.com', 'Trekking', 'Goal Oriented', 'Overthinking', 'Getting good placement', 96, 80, 88.98, 'Bio has not been edited by the user', 0, 0, 0),
-('Purva', 'Ambre', '121A1085', '12/05/2003', 'purva', 'Third Year', 'ymca', 'Computer Engineering', 'D1', 'purvasace121@siesgst.ac.in', 1, '2147483647', 'CBD Belapur', 'B+ve', 'https://www.linkedin.com/in/purva-ambre', 'purva.jpeg', 'Sanjay Ambre', 'Service', '2147483647', 'sanjay.ambre@gmail.com', 'Amarjaya Ambre', 'Teacher', '2147483647', 'amarjayaambre86@gmail.com', 'Dancing', 'Calm in panic situation.', 'Procrastination', 'Going to Germany.', 88.9, 83.4, 93.2, 'Bio has not been edited by the user', 0, 0, 0),
-('Tarun', 'Kurakula', '', '', 'tarun', '', 'Abcd@1234', '', '', 'rirese5761@ekposta.com', 1, '', '', '', '', 'mentee_pic.png', '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, 'Bio has not been edited by the user', 0, 0, 0);
+('Purva', 'Ambre', '121A1085', '12/05/2003', 'purva', 'Third Year', 'ymca', 'Computer Engineering', 'D1', 'purvasace121@siesgst.ac.in', 1, '2147483647', 'CBD Belapur', 'B+ve', 'https://www.linkedin.com/in/purva-ambre', 'purva.jpeg', 'Sanjay Ambre', 'Service', '2147483647', 'sanjay.ambre@gmail.com', 'Amarjaya Ambre', 'Teacher', '2147483647', 'amarjayaambre86@gmail.com', 'Dancing', 'Calm in panic situation.', 'Procrastination', 'Going to Germany.', 88.9, 83.4, 93.2, 'Bio has not been edited by the user', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -247,7 +247,8 @@ CREATE TABLE `mentors` (
 --
 
 INSERT INTO `mentors` (`fname`, `lname`, `username`, `password`, `email`, `email_verified`, `profile_pic`, `bio`, `job`, `cv_help`, `meetStudents`, `mockInterview`, `workExp`) VALUES
-('Rina', 'Bora', 'rina', 'rina', 'Rinab@sies.edu.in', 0, 'mentor_pic.png', '', 'Assistant Professor', 0, 0, 0, 0);
+('Jyoti', 'Baviskar', 'jyoti', 'jyoti', 'jyotice@gmail.com', 1, 'mentor_pic.png', 'Bio not edited by user', 'Assistant Professor', 0, 0, 0, 0),
+('Rina', 'Bora', 'rina', 'rina', 'Rinab@sies.edu.in', 1, 'mentor_pic.png', '', 'Assistant Professor', 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -263,6 +264,13 @@ CREATE TABLE `resource` (
   `file` varchar(255) NOT NULL,
   `date_uploaded` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `resource`
+--
+
+INSERT INTO `resource` (`id`, `username`, `title`, `description`, `file`, `date_uploaded`) VALUES
+(1, 'dhruv', 'AI in Tourism', 'Research Paper', 'AI_in_Tourism.pdf', '2024-04-10 17:54:50');
 
 --
 -- Indexes for dumped tables

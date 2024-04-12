@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, session, render_template, request, redirect, url_for, flash
 from flask_session import Session
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
@@ -7,14 +7,24 @@ from models import *
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import qrcode
-from flask import Flask, render_template
+from flask import Flask, render_template, make_response
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
+from io import BytesIO
 import base64
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Image, Spacer, Frame
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib import utils
+from reportlab.graphics.shapes import Drawing, Rect
 
 
 app = Flask(__name__)
@@ -164,8 +174,17 @@ def editProfile():
             db.session.commit()
             return redirect(url_for('menteeHome'))
         
+        assigned_mentee = Assigned_Mentee.query.filter_by(mentee=username).first()
+        mentee_remarks = assigned_mentee.remarks if assigned_mentee else None
+
+        # Fetch the mentor's name associated with the assigned mentee
+        mentor_name = None
+        if assigned_mentee:
+           mentor = Mentor.query.filter_by(username=assigned_mentee.mentor).first()
+           mentor_name = f"{mentor.fname} {mentor.lname}" if mentor else None
+        
         academic_record = Mentee_Grades.query.filter_by(username=username)
-        return render_template("editProfile.html", mentee=mentee, academic_record=academic_record)
+        return render_template("editProfile.html", mentee=mentee, academic_record=academic_record, mentor_name=mentor_name, mentee_remarks=mentee_remarks)
 
     else:
         # Handle other user types or unexpected cases
@@ -497,6 +516,31 @@ def verify_mentor_credentials(username):
     return render_template('mentor_credentials_prompt.html')
 
 
+@app.route('/add_mentee', methods=['POST'])
+def add_mentee():
+    if request.method == 'POST':
+        mentee_username = request.form.get('mentee_username')
+        mentor_name = session.get('username')  # Replace 'mentor_name' with the actual mentor's name
+        # Check if the mentee is already assigned to the given mentor
+        existing_assignment = Assigned_Mentee.query.filter_by(mentee=mentee_username, mentor=mentor_name).first()
+        if existing_assignment:
+            flash("Error: Mentee is already assigned to this mentor.")
+            return redirect(url_for('network'))
+        
+        # Check if the mentee is assigned to some other mentor
+        other_mentor_assignment = Assigned_Mentee.query.filter_by(mentee=mentee_username).first()
+        if other_mentor_assignment:
+            flash("Error: Mentee is already assigned to another mentor.")
+            return redirect(url_for('network'))
+        
+        # If the mentee is not assigned to the given mentor or any other mentor, create a new assignment
+        assigned_mentee = Assigned_Mentee(mentee=mentee_username, mentor=mentor_name, remarks='')
+        db.session.add(assigned_mentee)
+        db.session.commit()
+        flash("Mentee successfully assigned")
+        return redirect(url_for('network'))
+
+
 @app.route("/academicChanges", methods=["POST"])
 def academicChanges():
     if session.get("user_type") == "mentee":
@@ -569,11 +613,26 @@ def mentee():
     
     mentee_names = [mentee.mentee for mentee in assigned_mentees]
     
+    mentees_remarks = []
+    for mentee_username in mentee_usernames:
+        assigned_mentee = Assigned_Mentee.query.filter_by(mentor=mentor_username, mentee=mentee_username).first()
+        mentees_remarks.append(assigned_mentee.remarks if assigned_mentee else '')
+    
     academic_details = Mentee_Grades.query.filter(Mentee_Grades.username.in_(mentee_usernames)).all()
     # Fetch resources corresponding to the mentees in the mentee_usernames list
     resources_data = Resource.query.filter(Resource.username.in_(mentee_usernames)).all()
 
-    return render_template('mentee.html', mentees=mentee_names, resources_data=resources_data, academic_details=academic_details)
+    return render_template('mentee.html', mentees=mentee_names, mentees_remarks=mentees_remarks, resources_data=resources_data, academic_details=academic_details)
+
+
+@app.route('/update_remarks/<mentee>', methods=['POST'])
+def update_remarks(mentee):
+    new_remarks = request.form.get('remark')
+    # Update the remarks in the database for the specified mentee
+    assigned_mentee = Assigned_Mentee.query.filter_by(mentor=session.get('username'), mentee=mentee).first()
+    assigned_mentee.remarks = new_remarks
+    db.session.commit()
+    return redirect(url_for('mentee'))
 
 
 @app.route("/addResource", methods=["POST"])
@@ -841,3 +900,315 @@ def analysis():
         plt.close()
         
         return render_template('analysis.html', plot_data=plot_data, initial_plot_data=initial_plot_data, plot_data3=plot_data3, selected_semester=selected_semester)
+    
+    
+@app.route('/generate_report/<mentee_username>')
+def generate_report(mentee_username):
+    try:
+        mentee = Mentee.query.filter_by(username=mentee_username).first()
+        mentee_grades = Mentee_Grades.query.filter_by(username=mentee_username).all()
+        assigned_mentee = Assigned_Mentee.query.filter_by(mentee=mentee_username).first()
+        mentee_remarks = assigned_mentee.remarks if assigned_mentee else None
+        mentor_name = None
+        
+        plot_data_list = []
+        initial_plot_data_list = []
+        plot_data3_list = []
+
+        for semester in range(1, 9):  # Assuming there are 8 semesters
+            # Generate visualizations for each semester
+            plot_data, initial_plot_data, plot_data3 = generate_visualizations_for_mentee(mentee_username, semester)
+            plot_data_list.append(plot_data)
+            initial_plot_data_list.append(initial_plot_data)
+            plot_data3_list.append(plot_data3)
+        
+        if assigned_mentee:
+            mentor = Mentor.query.filter_by(username=assigned_mentee.mentor).first()
+            mentor_name = f"{mentor.fname} {mentor.lname}" if mentor else None
+
+        # Generate the PDF content with the retrieved visualizations
+        pdf_content = generate_pdf_content(mentee, mentee_grades, assigned_mentee, mentor_name, plot_data_list, initial_plot_data_list, plot_data3_list)
+        response = make_response(pdf_content)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename="{mentee_username}_report.pdf"'
+        return response
+    except Exception as e:
+        flash("Error: An error occurred while generating the report")
+        return redirect(url_for('mentee'))
+
+
+def generate_visualizations_for_mentee(mentee_username, semester):
+    username = mentee_username
+    semester = semester
+
+    # SQL query to retrieve CGPA for the logged-in mentee
+    query = f"SELECT MIN(cgpa) as cgpa FROM mentee_grades WHERE username = '{username}' GROUP BY sem ORDER BY sem"
+    
+    # Retrieve data from SQL database into a Pandas DataFrame
+    df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+    
+    # Check if data is available for this semester
+    if df.empty:
+        return None, None, None
+    
+    # Plot data
+    plt.plot(range(1, len(df) + 1), df['cgpa'], marker='o', color='b', linestyle='-')
+
+    # Add labels and title
+    plt.xlabel('Semester')
+    plt.ylabel('CGPA (out of 10)')
+    plt.title('Mentee CGPA Progress')
+
+    plt.xticks(range(1, len(df) + 1))  # Set x-axis ticks to match semester numbers
+    plt.yticks(range(12))
+
+    for i, cgpa in enumerate(df['cgpa']):
+       plt.annotate(f'CGPA: {cgpa:.2f}', (i + 1, cgpa), textcoords="offset points", xytext=(0,10), ha='center')
+    
+    # Convert plot to base64-encoded image
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plot_data = base64.b64encode(buffer.read()).decode()
+
+    # Close plot to free up resources
+    plt.close()
+    
+    # Render the page with the initial pie chart data for the first semester
+    # Query the database for subject contributions for the first semester
+    query = f"SELECT subject, total_marks FROM mentee_grades WHERE username = '{username}' and sem = {semester}"
+    df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+    
+    # Check if data is available for this semester
+    if df.empty:
+        return None, None, None
+
+    # Calculate the contribution of each subject based on the total marks
+    total_marks_semester = df['total_marks'].sum()
+    subject_contributions = df.groupby('subject')['total_marks'].sum() / total_marks_semester
+
+    # Plot the data as a pie chart
+    plt.figure(figsize=(8, 8))
+    plt.pie(subject_contributions, labels=subject_contributions.index, autopct='%1.1f%%', startangle=140)
+    plt.title(f'Contribution of Subjects in Semester {semester}')
+
+    # Convert plot to base64-encoded image
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    initial_plot_data = base64.b64encode(buffer.read()).decode()
+    plt.close()
+        
+    query = f"SELECT subject, marks_ia, marks_sem FROM mentee_grades WHERE username = '{username}' and sem = {semester}"
+
+    # Retrieve data from SQL database into a Pandas DataFrame
+    df = pd.read_sql(query, app.config["SQLALCHEMY_DATABASE_URI"])
+    
+    # Check if data is available for this semester
+    if df.empty:
+        return None, None, None
+
+    # Plot data
+    plt.figure(figsize=(12, 6))
+
+    # Set the width of the bars
+    bar_width = 0.35
+
+    # Set the positions of the bars on the x-axis
+    index = np.arange(len(df))
+
+    # Plot bars for internal assessment marks
+    plt.bar(index, df['marks_ia'], bar_width, label='Internal Assessment Marks')
+
+    # Plot bars for semester marks
+    plt.bar(index + bar_width, df['marks_sem'], bar_width, label='Semester Marks')
+
+    # Add labels and title
+    plt.xlabel('Subjects')
+    plt.ylabel('Marks')
+    plt.title(f'Comparison of Internal Assessment Marks and Semester Marks for Semester {semester}')
+    plt.xticks(index + bar_width / 2, df['subject'])
+    plt.legend()
+
+    # Set the upper limit on the y-axis
+    plt.ylim(0, 80)
+
+    # Customize plot (optional)
+    plt.grid(True, axis='y')
+
+    # Convert plot to base64-encoded image
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plot_data3 = base64.b64encode(buffer.read()).decode()
+
+    # Close plot to free up resources
+    plt.close()
+        
+    return plot_data, initial_plot_data, plot_data3
+
+
+def generate_pdf_content(mentee, mentee_grades, assigned_mentee, mentor_name, plot_data_list, initial_plot_data_list, plot_data3_list):
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+
+    # Define the title
+    title = f"{mentee.fname} {mentee.lname}'s Report"
+    doc.title = title
+    
+    title_pdf = "Mentee Profile Report"
+    title_style = ParagraphStyle(name="TitleStyle", fontSize=20, alignment=1, spaceAfter=0.2*inch, fontName="Times-Bold")
+    title_paragraph = Paragraph(title_pdf, title_style)
+    
+    title_1 = "Mentee Grades"
+    title_style = ParagraphStyle(name="TitleStyle", fontSize=14, alignment=1, spaceAfter=0.2*inch, fontName="Times-Bold")
+    title_paragraph1 = Paragraph(title_1, title_style)
+    
+    # Add profile picture
+    profile_pic_path = f"static/img/{mentee.profile_pic}"
+    profile_pic = utils.ImageReader(profile_pic_path)
+    profile_pic_width, profile_pic_height = profile_pic.getSize()
+    aspect_ratio = profile_pic_height / profile_pic_width
+    doc_width, doc_height = letter
+    profile_pic_width = doc_width * 0.2  # Adjust width as needed
+    profile_pic_height = profile_pic_width * aspect_ratio
+    
+    profile_pic = Image(profile_pic_path, width=profile_pic_width, height=profile_pic_height)
+
+    # Define data for the table of academic details
+    academic_data_by_semester = {}
+    for grade in mentee_grades:
+        if grade.sem not in academic_data_by_semester:
+           academic_data_by_semester[grade.sem] = {
+              'data': [['Subject', 'IA Marks', 'Semester Marks', 'Total Marks']],
+              'cgpa': set()  # Use a set to store unique CGPA values
+        }
+        academic_data_by_semester[grade.sem]['data'].append([grade.subject, grade.marks_ia, grade.marks_sem, grade.total_marks])
+        academic_data_by_semester[grade.sem]['cgpa'].add(grade.cgpa)
+
+    # Define style for the table
+    table_style = TableStyle([('BACKGROUND', (0,0), (-1,0), colors.grey),
+                              ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
+                              ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+                              ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+                              ('BOTTOMPADDING', (0,0), (-1,0), 12),
+                              ('BACKGROUND', (0,1), (-1,-1), colors.beige),
+                              ('GRID', (0,0), (-1,-1), 1, colors.black)])
+    
+    # Add mentee details
+    content = [
+        title_paragraph,
+        Spacer(1, 0.5 * inch),
+        profile_pic,
+        Spacer(1, 0.5 * inch),
+        Paragraph(f"{mentee.fname} {mentee.lname}", styles['Heading1']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>PRN Number:</b> {mentee.prn_num}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Year:</b> {mentee.year}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Branch:</b> {mentee.branch}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Batch:</b> {mentee.batch}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Email:</b> {mentee.email}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Mobile No:</b> {mentee.mobile_no}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Address:</b> {mentee.address}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Blood Group:</b> {mentee.blood_grp}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>LinkedIn Profile:</b> {mentee.linkedin_pro}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Hobbies:</b> {mentee.hobbies}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Strengths:</b> {mentee.strengths}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Weakness:</b> {mentee.weakness}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Goals:</b> {mentee.goals}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        Paragraph(f"<b>Bio:</b> {mentee.bio}", styles['Normal']),
+        Spacer(0.2, 0.2 * inch),
+        title_paragraph1,
+    ]
+    
+    # Sort the academic data by semester
+    sorted_academic_data = sorted(academic_data_by_semester.items())
+    
+    # Create tables for each semester
+    for semester, data in sorted_academic_data:
+        cgpa_text = f"{' '.join(str(c) for c in data['cgpa'])}"  # Join unique CGPA values
+        academic_table = Table(data['data'], colWidths=[1.5 * inch, 0.8 * inch, 1.5 * inch, 1.5 * inch])
+        academic_table.setStyle(table_style)
+        content.append(Paragraph(f"<b>Semester {semester}</b>", styles['Heading2']))
+        content.append(Paragraph(f"<b>CGPA scored: {cgpa_text}</b>", styles['Heading4']))
+        content.append(Spacer(0.2, 0.2 * inch))
+        content.append(academic_table)
+        content.append(Spacer(0.2, 0.2 * inch))
+    
+    # Add analysis
+    content.append(Spacer(0.2, 0.2 * inch))
+    analysis_text = "Analysis Based on Grades"
+    analysis_text_style = ParagraphStyle(name="TitleStyle", fontSize=14, alignment=1, spaceAfter=0.5*inch, fontName="Times-Bold")
+    content.append(Paragraph(analysis_text, analysis_text_style))
+    
+    # Add analysis
+    analysis_text1 = """
+    This analysis is based on the grades achieved by the mentee in each semester. It provides insights into the mentee's academic performance over time and highlights areas of strengths and weaknesses.
+    """
+    analysis_text_style1 = ParagraphStyle(name="TitleStyle", fontSize=12, alignment=0, spaceAfter=0.5*inch, leading=16)
+    content.append(Paragraph(analysis_text1, analysis_text_style1))
+    
+    # Add pie charts from analysis route
+    content.append(Spacer(0.2, 0.2 * inch))
+    pie_chart_image = Image(BytesIO(base64.b64decode(plot_data_list[0])), width=6*inch, height=4*inch)
+    content.append(pie_chart_image)
+
+    # Add pie charts and bar graphs for each semester
+    for initial_plot_data, plot_data3 in zip(initial_plot_data_list, plot_data3_list):
+        # Create a row for each semester
+        row_content = []
+
+        # Add the initial pie chart if available
+        if initial_plot_data:
+            initial_pie_chart_image = Image(BytesIO(base64.b64decode(initial_plot_data)), width=3*inch, height=3*inch)
+            row_content.append(initial_pie_chart_image)
+
+        # Add the bar graph if available
+        if plot_data3:
+            bar_chart_image = Image(BytesIO(base64.b64decode(plot_data3)), width=5*inch, height=4*inch)
+            row_content.append(bar_chart_image)
+
+        # Check if both initial pie chart and bar graph are available for the semester
+        if len(row_content) == 2:
+            # Create a table with two columns
+            content.append(Spacer(0.2, 0.2 * inch))
+            row_table = Table([[row_content[0], row_content[1]]], colWidths=[3*inch, 4*inch])
+            row_table.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER'), ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
+            content.append(row_table)
+
+    # Add mentor remarks
+    remark_text = "Mentor Remarks"
+    remark_text_style = ParagraphStyle(name="TitleStyle", fontSize=14, alignment=1, spaceAfter=0.2*inch, fontName="Times-Bold")
+    content.append(Spacer(1, 0.5 * inch))
+    content.append((Paragraph(remark_text, remark_text_style)))
+    
+    if assigned_mentee and assigned_mentee.remarks:
+        remarks = assigned_mentee.remarks
+        if mentor_name:
+            mentor = mentor_name
+        else:
+            mentor = "Mentor"
+        content.append(Paragraph(f"<b>{mentor}:</b> {remarks}", styles['Heading4']))
+    else:
+        content.append(Paragraph(f"<b>{mentor_name}:</b> No remarks provided yet.", styles['Heading4']))
+
+    # Build the PDF
+    doc.build(content)
+    
+    pdf_content = buffer.getvalue()
+    buffer.close()
+    return pdf_content

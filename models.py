@@ -85,3 +85,4 @@ class Assigned_Mentee(db.Model):
    __tablename__ = "assigned_mentees"
    mentee = db.Column(db.String(255), primary_key = True)
    mentor = db.Column(db.String(255), nullable=False)
+   remarks = db.Column(db.String(255), nullable=False)
