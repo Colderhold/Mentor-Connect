@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2024 at 05:33 PM
+-- Generation Time: Apr 24, 2024 at 09:29 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -29,6 +29,8 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `assigned_mentees` (
   `mentee` varchar(255) NOT NULL,
+  `fname` text NOT NULL,
+  `lname` text NOT NULL,
   `mentor` varchar(255) NOT NULL,
   `remarks` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -37,11 +39,11 @@ CREATE TABLE `assigned_mentees` (
 -- Dumping data for table `assigned_mentees`
 --
 
-INSERT INTO `assigned_mentees` (`mentee`, `mentor`, `remarks`) VALUES
-('Aayush', 'rina', 'Can do better!!!'),
-('dhruv', 'rina', 'Can do better!!!'),
-('pran', 'jyoti', 'Can do better!!\r\n'),
-('purva', 'jyoti', 'Can do better!!');
+INSERT INTO `assigned_mentees` (`mentee`, `fname`, `lname`, `mentor`, `remarks`) VALUES
+('Aayush', 'Aayush', 'Shah', 'rina', 'Can do better!!!'),
+('dhruv', 'Dhruv', 'Shetty', 'rina', 'Can do better!!'),
+('pran', 'Pranjal', 'Patil', 'jyoti', 'Can do better!!\r\n'),
+('purva', 'Purva', 'Ambre', 'jyoti', 'Can do better!!');
 
 -- --------------------------------------------------------
 
@@ -270,7 +272,14 @@ CREATE TABLE `resource` (
 --
 
 INSERT INTO `resource` (`id`, `username`, `title`, `description`, `file`, `date_uploaded`) VALUES
-(1, 'dhruv', 'AI in Tourism', 'Research Paper', 'AI_in_Tourism.pdf', '2024-04-10 17:54:50');
+(1, 'dhruv', 'NSS ERP Certificate', 'Work Done in ERP Portal of the college.', 'ERP_Certificate.pdf', '2024-04-24 18:03:26'),
+(2, 'dhruv', 'Hackfusion Certificate', 'Participated in HackFusion Hackathon.', 'Hack_Fusion_Certificate.pdf', '2024-04-24 18:04:24'),
+(3, 'pran', 'Hackfusion Certificate', 'Participated in Hackfusion Hackathon.', 'hackfusion.pdf', '2024-04-24 18:05:36'),
+(4, 'pran', 'Google Cloud Certificate', 'Participated in GCP conducted by GDSC SIEGST.', 'GCP.jpg', '2024-04-24 18:06:31'),
+(5, 'Aayush', 'NIT Hackathon', 'Participated in NIT Hackathon.', 'NIT-Hackthon.pdf', '2024-04-24 18:07:58'),
+(6, 'Aayush', 'NSS Portal Certificate', 'Built the NSS Portal for the ERP System of the college.', 'NSS_portal_internship.png', '2024-04-24 18:09:11'),
+(7, 'purva', 'SIH Certificate', 'Participated in SIH Hackathon.', 'purva_certificate_.pdf', '2024-04-24 18:10:30'),
+(8, 'purva', 'Prodigy Certificate', 'Completed 1 month internship in Data Science at Prodigy.', 'purva_in2.pdf', '2024-04-24 18:12:18');
 
 --
 -- Indexes for dumped tables
@@ -320,7 +329,7 @@ ALTER TABLE `mentee_grades`
 -- AUTO_INCREMENT for table `resource`
 --
 ALTER TABLE `resource`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

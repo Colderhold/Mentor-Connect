@@ -520,6 +520,8 @@ def verify_mentor_credentials(username):
 def add_mentee():
     if request.method == 'POST':
         mentee_username = request.form.get('mentee_username')
+        mentee_fname = request.form.get('mentee_fname')
+        mentee_lname = request.form.get('mentee_lname')
         mentor_name = session.get('username')  # Replace 'mentor_name' with the actual mentor's name
         # Check if the mentee is already assigned to the given mentor
         existing_assignment = Assigned_Mentee.query.filter_by(mentee=mentee_username, mentor=mentor_name).first()
@@ -534,7 +536,7 @@ def add_mentee():
             return redirect(url_for('network'))
         
         # If the mentee is not assigned to the given mentor or any other mentor, create a new assignment
-        assigned_mentee = Assigned_Mentee(mentee=mentee_username, mentor=mentor_name, remarks='')
+        assigned_mentee = Assigned_Mentee(mentee=mentee_username, fname=mentee_fname, lname=mentee_lname, mentor=mentor_name, remarks='')
         db.session.add(assigned_mentee)
         db.session.commit()
         flash("Mentee successfully assigned")
@@ -611,7 +613,7 @@ def mentee():
     # Fetch all records from the assigned_mentees table for the specific mentor
     assigned_mentees = Assigned_Mentee.query.filter_by(mentor=mentor_username).all()
     
-    mentee_names = [mentee.mentee for mentee in assigned_mentees]
+    mentee_names = [f"{mentee.mentee} {mentee.fname} {mentee.lname}" for mentee in assigned_mentees]
     
     mentees_remarks = []
     for mentee_username in mentee_usernames:
@@ -627,11 +629,23 @@ def mentee():
 
 @app.route('/update_remarks/<mentee>', methods=['POST'])
 def update_remarks(mentee):
-    new_remarks = request.form.get('remark')
-    # Update the remarks in the database for the specified mentee
-    assigned_mentee = Assigned_Mentee.query.filter_by(mentor=session.get('username'), mentee=mentee).first()
-    assigned_mentee.remarks = new_remarks
-    db.session.commit()
+    try:
+        new_remarks = request.form.get('remark')
+        
+        # Update the remarks in the database for the specified mentee
+        assigned_mentee = Assigned_Mentee.query.filter_by(mentor=session.get('username'), mentee=mentee).first()
+        
+        if assigned_mentee:
+            assigned_mentee.remarks = new_remarks
+            db.session.commit()
+            
+            flash('Remarks added successfully!')
+        else:
+            flash('Error: Mentee not found!')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error: Error updating remarks: {e}')
+    
     return redirect(url_for('mentee'))
 
 

@@ -59,6 +59,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Mentee Username</th>
             <th>Mentee Name</th>
             <th>Actions</th>
         </tr>
@@ -66,13 +67,14 @@
     <tbody>
         {% for i in range(mentees|length) %}
         <tr>
-            <td>{{ mentees[i] }}</td>
+            <td>{{ mentees[i].split()[0] }}</td> 
+            <td>{{ " ".join(mentees[i].split()[1:]) }}</td> 
             <td>
                 <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#remarkModal{{ i }}">
                     Remarks
                 </button>
 
-                <button type="button" class="btn btn-outline-primary" onclick="window.location.href = '{{ url_for('generate_report', mentee_username=mentees[i]) }}'">
+                <button type="button" class="btn btn-outline-primary" onclick="window.location.href = '{{ url_for('generate_report', mentee_username=mentees[i].split()[0]) }}'">
                     Report
                 </button>                              
 
@@ -80,7 +82,7 @@
                     Resource Preview
                 </button>
 
-                <button type="button" class="btn btn-outline-primary" onclick="window.location.href = '{{ url_for('view_profile', username=mentees[i]) }}'">
+                <button type="button" class="btn btn-outline-primary" onclick="window.location.href = '{{ url_for('view_profile', username=mentees[i].split()[0]) }}'">
                     Mentee Profile
                 </button>
 
@@ -98,12 +100,12 @@
 </table>
 
 {% for i in range(mentees|length) %}
-{% set mentee_resources = resources_data | selectattr("username", "equalto", mentees[i]) %}
+{% set mentee_resources = resources_data | selectattr("username", "equalto", mentees[i].split()[0]) %}
 <div class="modal fade" id="resourcesModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="resourcesModalLabel{{ i }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="resourcesModalLabel{{ i }}">Resources for {{ mentees[i] }}</h5>
+                <h5 class="modal-title" id="resourcesModalLabel{{ i }}">Resources for {{ mentees[i].split()[0] }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -118,7 +120,7 @@
                         </li>
                     {% endfor %}
                     {% if mentee_resources is none %}
-                        <li>No resources added by {{ mentees[i] }}</li>
+                        <li>No resources added by {{ mentees[i].split()[0] }}</li>
                     {% endif %}
                 </ul>
             </div>
@@ -139,25 +141,25 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to remove {{ mentees[i] }}?</p>
+                <p>Are you sure you want to remove {{ mentees[i].split()[0] }}?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a href="{{ url_for('delete_mentee', username=mentees[i]) }}" class="btn btn-danger">Remove</a>
+                <a href="{{ url_for('delete_mentee', username=mentees[i].split()[0]) }}" class="btn btn-danger">Remove</a>
             </div>
         </div>
     </div>
 </div>
 
 
-{% set mentee_marks = academic_details | selectattr("username", "equalto", mentees[i]) %}
+{% set mentee_marks = academic_details | selectattr("username", "equalto", mentees[i].split()[0]) %}
 {% set grouped_marks = mentee_marks | groupby('sem') %}
 
 <div class="modal fade" id="academicModal{{ i }}" tabindex="-1" role="dialog" aria-labelledby="academicModalLabel{{ i }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="academicModalLabel{{ i }}">Academic Details for {{ mentees[i] }}</h5>
+                <h5 class="modal-title" id="academicModalLabel{{ i }}">Academic Details for {{ mentees[i].split()[0] }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -190,7 +192,7 @@
                 {% endfor %}
             </div>
             {% if not mentee_marks %}
-            <li>No details added by {{ mentees[i] }}</li>
+            <li>No details added by {{ mentees[i].split()[0] }}</li>
             {% endif%}
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -207,13 +209,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="remarkModalLabel{{ i }}">Add Remarks for {{ mentees[i] }}</h5>
+                <h5 class="modal-title" id="remarkModalLabel{{ i }}">Add Remarks for {{ mentees[i].split()[0] }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ url_for('update_remarks', mentee=mentees[i]) }}" id="remarkForm{{ i }}">
+                <form method="POST" action="{{ url_for('update_remarks', mentee=mentees[i].split()[0]) }}" id="remarkForm{{ i }}">
                     <input type="text" name="remark" class="form-control" id="remark" placeholder="Add remark..." value="{{ mentees_remarks[i] }}" required>
                 </form>
             </div>

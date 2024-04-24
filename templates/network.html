@@ -105,6 +105,8 @@
               </div>
               <form action="{{ url_for('add_mentee') }}" method="post">
                 <input type="hidden" name="mentee_username" value="{{ mentee.username }}">
+                <input type="hidden" name="mentee_fname" value="{{ mentee.fname }}">
+                <input type="hidden" name="mentee_lname" value="{{ mentee.lname }}">
                 <button type="submit" class="btn btn-outline-success">Add Mentee</button>
             </form>               
           </div>
