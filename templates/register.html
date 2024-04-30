@@ -6,6 +6,10 @@
 
 {% block body %}
 <body>
+    <div class="loader-overlay">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" class="brand_logo" alt="Logo">
+    </div>
+
   <div class="container register">
                 <div class="row">
                     <div class="col-md-3 register-left">
@@ -127,6 +131,16 @@
                 </div>
 
             </div>
+
+            <script>
+                window.addEventListener('load', function() {
+                    // Add a delay of 2 seconds (2000 milliseconds) before hiding the loader overlay
+                    setTimeout(function() {
+                        // Hide the loader overlay after 2 seconds
+                        document.querySelector('.loader-overlay').style.display = 'none';
+                    }, 200); // Adjust the delay time as needed
+                });
+            </script>            
 {% endblock %}
 
 {% block right_button %}

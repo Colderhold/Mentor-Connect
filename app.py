@@ -480,7 +480,7 @@ def profileChanges():
         flash("Adding a bio will make your profile look good! (Changes of any other fields have been saved)")
         return redirect(url_for('editProfile'))
     flash("Changes have been saved to the database")
-    return render_template("editProfile.html", timestamp=timestamp)
+    return render_template("editProfile.html", mentee=username, timestamp=timestamp)
 
 
 @app.route('/view_profile/<username>', methods=['GET', 'POST'])
