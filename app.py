@@ -395,18 +395,31 @@ def change_password():
 
 @app.route('/deleteMentee/<username>', methods=['GET', 'POST'])
 def delete_mentee(username):
-    # Handle the deletion of the mentee with the given username
-    mentee = Assigned_Mentee.query.filter_by(mentee=username).first()
+    try:
+        # Handle the deletion of the mentee with the given username
+        mentee = Assigned_Mentee.query.filter_by(mentee=username).first()
 
-    if mentee:
-        # Delete the mentee from your database
-        db.session.delete(mentee)
-        db.session.commit()
-        flash(f'Mentee {username} has been deleted', 'success')
-    else:
-        flash(f'Mentee {username} not found', 'error')
+        if mentee:
+            # Create a new entry in the Previous_Mentee table
+            previous_mentee = Previous_Mentee(
+                mentee=mentee.mentee,
+                fname=mentee.fname,
+                lname=mentee.lname,
+                mentor=mentee.mentor,
+                remarks=mentee.remarks
+            )
+            # Delete the mentee from the Assigned_Mentee table
+            db.session.delete(mentee)
+            db.session.add(previous_mentee)
+            db.session.commit()
+            flash(f'Mentee {username} has been deleted')
+        else:
+            flash(f'Error: Mentee {username} not found')
 
-    return redirect(url_for('mentee'))
+        return redirect(url_for('mentee'))
+    except Exception as e:
+        flash('Error: An error occurred while deleting the mentee')
+        return redirect(url_for('mentee'))
 
 
 @app.route("/profileChanges", methods=["POST"])
@@ -922,7 +935,7 @@ def generate_report(mentee_username):
         mentee = Mentee.query.filter_by(username=mentee_username).first()
         mentee_grades = Mentee_Grades.query.filter_by(username=mentee_username).all()
         assigned_mentee = Assigned_Mentee.query.filter_by(mentee=mentee_username).first()
-        mentee_remarks = assigned_mentee.remarks if assigned_mentee else None
+        previous_mentee = Previous_Mentee.query.filter_by(mentee=mentee_username).all()
         mentor_name = None
         
         plot_data_list = []
@@ -941,7 +954,7 @@ def generate_report(mentee_username):
             mentor_name = f"{mentor.fname} {mentor.lname}" if mentor else None
 
         # Generate the PDF content with the retrieved visualizations
-        pdf_content = generate_pdf_content(mentee, mentee_grades, assigned_mentee, mentor_name, plot_data_list, initial_plot_data_list, plot_data3_list)
+        pdf_content = generate_pdf_content(mentee, mentee_grades, assigned_mentee, previous_mentee, mentor_name, plot_data_list, initial_plot_data_list, plot_data3_list)
         response = make_response(pdf_content)
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'attachment; filename="{mentee_username}_report.pdf"'
@@ -1062,7 +1075,7 @@ def generate_visualizations_for_mentee(mentee_username, semester):
     return plot_data, initial_plot_data, plot_data3
 
 
-def generate_pdf_content(mentee, mentee_grades, assigned_mentee, mentor_name, plot_data_list, initial_plot_data_list, plot_data3_list):
+def generate_pdf_content(mentee, mentee_grades, assigned_mentee, previous_mentee, mentor_name, plot_data_list, initial_plot_data_list, plot_data3_list):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter)
     styles = getSampleStyleSheet()
@@ -1209,20 +1222,39 @@ def generate_pdf_content(mentee, mentee_grades, assigned_mentee, mentor_name, pl
     remark_text_style = ParagraphStyle(name="TitleStyle", fontSize=14, alignment=1, spaceAfter=0.2*inch, fontName="Times-Bold")
     content.append(Spacer(1, 0.5 * inch))
     content.append((Paragraph(remark_text, remark_text_style)))
-    
+
+    # Add remarks from assigned mentee (Current Mentee)
     if assigned_mentee and assigned_mentee.remarks:
         remarks = assigned_mentee.remarks
         if mentor_name:
             mentor = mentor_name
         else:
             mentor = "Mentor"
-        content.append(Paragraph(f"<b>{mentor}:</b> {remarks}", styles['Heading4']))
+        content.append(Paragraph(f"<b>{mentor} (Current Mentee):</b> {remarks}", styles['Heading4']))
+    elif assigned_mentee:
+        # No remarks provided by the current mentor
+        if mentor_name:
+            mentor = mentor_name
+        else:
+            mentor = "Mentor"
+        content.append(Paragraph(f"<b>{mentor} (Current Mentee):</b> No remarks provided yet.", styles['Heading4']))
     else:
-        content.append(Paragraph(f"<b>{mentor_name}:</b> No remarks provided yet.", styles['Heading4']))
+        if not previous_mentee:
+            # No remarks found for both current and previous mentees
+            content.append(Paragraph("<b>Mentor:</b> No remarks provided yet.", styles['Heading4']))
+
+
+    # Add remarks from previous mentee (Previous Mentee)
+    if previous_mentee:
+        for prev_mentee in previous_mentee:
+            mentor = Mentor.query.filter_by(username=prev_mentee.mentor).first()
+            mentor_name = f"{mentor.fname} {mentor.lname}" if mentor else "Unknown Mentor"
+            content.append(Paragraph(f"<b>{mentor_name} (Previous Mentee):</b> {prev_mentee.remarks}", styles['Heading4']))
+    
 
     # Build the PDF
     doc.build(content)
-    
     pdf_content = buffer.getvalue()
     buffer.close()
+    
     return pdf_content
