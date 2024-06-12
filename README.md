@@ -1,6 +1,5 @@
 # Mentorship QR Code Communication System
 
-
 **Overview**
 
 Effective communication and engagement between mentors and mentees are crucial for successful mentorship programs. Traditional methods often lack efficiency and real-time interaction. This project addresses this challenge by implementing QR code-based solutions to create seamless and dynamic communication channels between mentors and mentees.
