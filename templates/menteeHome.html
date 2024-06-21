@@ -5,37 +5,11 @@
 {% endblock %}
 
 {% block body %}
-<style>
-    /* CSS for the background image with opacity */
-    .background-image {
-        position: absolute;
-        top: 48%;
-        left: 50%;
-        text-align: center;
-        width: 50%;
-        height: 50%;
-        z-index: -1; /* Make sure the image stays behind the content */
-        background-image: url('/static/img/background.jpg'); 
-        background-size: cover; 
-        opacity: 0.6; /* Adjust the opacity as needed */
-    }
-
-    .background-image1 {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        text-align: center;
-        width: 50%;
-        height: 50%;
-        z-index: -1; /* Make sure the image stays behind the content */
-        background-image: url('/static/img/background1.jpg'); 
-        background-size: cover; 
-        opacity: 0.6; /* Adjust the opacity as needed */
-    }
-</style>
-
 <h2 style="text-align:center;">Mentee Home</h2>
 <br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
 <p>We are a platform that connects mentors and mentees to help them achieve their goals.
     Whether you are a seasoned professional looking to give back or an aspiring individual
     seeking guidance, we have a mentor for you.</p>
@@ -47,16 +21,18 @@
     <p>Mentoring can have a significant impact on both the mentor and the mentee. Mentees benefit
     from the knowledge, experience, and insights of their mentors. Mentors also benefit from the
     relationship, as it gives them the opportunity to share their expertise and help others succeed.</p>
-
+    </div>
+    </div>
+</div>
 <div class="line"></div>
 
-<!-- Background image with opacity -->
-<div class="background-image"></div>
-
-<div class="background-image1"></div>
-
+<img src='/static/img/background.jpg' class='img-fluid' id='background-image'>
+<img src='/static/img/background1.jpg' class='img-fluid' id='background-image1'>
 {% endblock %}
 
 {% block right_button %}
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('menteeHome') }}';">Home</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('resources') }}';">Resources</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('analysis') }}';">Analysis</button>
 <button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

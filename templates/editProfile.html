@@ -187,9 +187,9 @@
       </div>
     </div>
     {% if session["user_type"] == "mentee" %}
-    <h4 style='margin-top: 30px;'>
+    <h2 style='margin-top: 30px;'>
       <span style="text-align: center;"> Parent Details </span>
-    </h4>
+    </h2>
     <div class='line'></div>
     <h5 style='margin-top: 30px;'>
       <span style="text-align: center;"> Father's Details </span>
@@ -261,9 +261,9 @@
     {%endif%}
 
     {% if session["user_type"] == "mentee" %}
-    <h4 style='margin-top: 30px;'>
+    <h2 style='margin-top: 30px;'>
       <span style="text-align: center;"> Academic Details </span>
-    </h4>
+    </h2>
     <div class="line"></div>
     <div class="profile-user-info">
     <div class="profile-info-row">
@@ -326,7 +326,7 @@
       <img id="qrCodeImage" src="{{ url_for('static', filename='img/qrcode_' + session['username'] + '.png') }}?t={{ timestamp }}" alt="QR Code" style="max-width: 100%;">
    </div>
    
-   <button id="saveAsPngButton" class="btn btn-outline-primary">Save as PNG</button>
+   <button id="saveAsPngButton" class="btn btn-outline-success">Save as PNG</button>
 
    <div class="line"></div>
       <div class="widget-box transparent">
@@ -462,74 +462,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Grades Table</title>
         <style>
-            table {
-                border-collapse: collapse;
-                width: 80%;
-                margin: 20px auto;
-            }
-    
-            table, th, td {
-                border: 1px solid #ccc;
-            }
-    
-            th, td {
-                padding: 8px;
-                text-align: center;
-            }
-    
-            th {
-                background-color: #f2f2f2;
-            }
-    
-            .add-row-button, .delete-row-button {
-                display: inline-block;
-                border-radius: 20px;
-                margin: 10px auto;
-                padding: 10px;
-                background-color: #007bff;
-                color: #fff;
-                border: none;
-                cursor: pointer;
-            }
-
-          .form {
-            max-width: 100%;
-            padding: 5px; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-        }
-
-        .form1 {
-          max-width: 80%;
-          max-height: 30px;
-          padding: 5px;
-          border: 1px solid #ccc; 
-          border-radius: 5px; 
-      }
-        
-        .form::placeholder {
-            color: #999;
-        }
-
-        .form1::placeholder {
-          color: #999;
-      }
-
-        body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          margin: 0;
-      }
-
-      h4 {
-          display: flex;
-      }
+            
       </style>
     </head>
     <body>
       
+      <div class='container-fluid'>
       <form method="POST" action="{{ url_for('academicChanges') }}" id="academicChanges">
         <div class="container center">
             <div style="display: flex; justify-content: center;">
@@ -546,6 +484,7 @@
                 </div>
             </div>
             <input type="hidden" id="row-count" name="row-count" value="5">
+            <div class="table-container">
             <table id="mentee-grades">
                 <thead>
                     <tr>
@@ -561,80 +500,79 @@
                     <!-- Use a loop to generate rows with unique names -->
                     {% for i in range(5) %}
                     <tr>
-                        <td>{{ i + 1 }}</td>
-                        <td><input type="text" name="subject_{{ i }}" class="form" placeholder='Enter subject {{ i + 1 }}'></td>
-                        <td><input type="text" name="marks_ia_{{ i }}" class="form" placeholder='Enter marks'></td>
-                        <td><input type="text" name="marks_sem_{{ i }}" class="form" placeholder='Enter marks'></td>
-                        <td><input type="text" name="total_marks_{{ i }}" class="form" placeholder='Enter marks'></td>
+                        <td data-label="Sr. No.">{{ i + 1 }}</td>
+                        <td data-label="Subject"><input type="text" name="subject_{{ i }}" class="form" placeholder='Enter subject {{ i + 1 }}'></td>
+                        <td data-label="Marks in IA (Avg)"><input type="text" name="marks_ia_{{ i }}" class="form" placeholder='Enter marks'></td>
+                        <td data-label="Marks in Semester"><input type="text" name="marks_sem_{{ i }}" class="form" placeholder='Enter marks'></td>
+                        <td data-label="Total Marks"><input type="text" name="total_marks_{{ i }}" class="form" placeholder='Enter marks'></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <div>
         
             <input type="text" name="cgpa" class="form" placeholder="Enter CGPA" style="width: 80%; padding: 10px; margin: 10px auto 0 auto; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; display: block;">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                <div style="padding-left: 8%;">
-                    <button class="btn btn-outline-success" style='border-radius: 20px;' type="submit">Submit</button>
-                </div>
-                <div class="button-container" style="padding-right: 8%;">
+            <div class='button-table' style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                <div class="button-container">
                     <button class="add-row-button" onclick="addRow()">Add Row</button>
                     <button class="delete-row-button" onclick="deleteRow()">Delete Row</button>
                 </div>
+                <div class='submit' style='text-align: center;'>
+                  <button class="btn btn-outline-success" type="submit">Submit</button>
+              </div>
             </div>
         </form>
       
-  <div class="modal fade" id="academicModal" tabindex="-1" role="dialog" aria-labelledby="academicModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document" style='max-width: 600px;'>
-        <div class="modal-content">
-            <div class="modal-header" style='display: flex;'>
-                <h2 class="modal-title" style="padding: 20px 38%;" id="academicModalLabel">Grades</h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            {% if academic_record %}
-                {% set semesters = academic_record|groupby('sem') %}
-                {% for semester, records in semesters %}
-                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-                        <h3 style="margin: 20px 35%;">Semester {{ semester }}</h3>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>IA Marks</th>
-                                    <th>Semester Marks</th>
-                                    <th>Total Marks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for record in records %}
-                                    <tr>
-                                        <td>{{ record.subject }}</td>
-                                        <td>{{ record.marks_ia }}</td>
-                                        <td>{{ record.marks_sem }}</td>
-                                        <td>{{ record.total_marks }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        <h4 style="margin: 10px 38%;">CGPA: {{ records[0].cgpa }}</h4>
-                        <div class='line'></div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="modal-body">
-                    <p>No details added by {{ username }}</p>
-                </div>
-            {% endif %}
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+        <div class="modal fade" id="academicModal" tabindex="-1" role="dialog" aria-labelledby="academicModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document" style="max-width: 600px;">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h2 class="modal-title w-100 text-center" id="academicModalLabel">Grades</h2>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+      
+                  <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                      {% if academic_record %}
+                          {% set semesters = academic_record|groupby('sem') %}
+                          {% for semester, records in semesters %}
+                              <h3 class="text-center mb-4">Semester {{ semester }}</h3>
+                              <table class="table table-bordered">
+                                  <thead class="thead-light">
+                                      <tr>
+                                          <th>Subject</th>
+                                          <th>IA Marks</th>
+                                          <th>Semester Marks</th>
+                                          <th>Total Marks</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      {% for record in records %}
+                                          <tr>
+                                              <td>{{ record.subject }}</td>
+                                              <td>{{ record.marks_ia }}</td>
+                                              <td>{{ record.marks_sem }}</td>
+                                              <td>{{ record.total_marks }}</td>
+                                          </tr>
+                                      {% endfor %}
+                                  </tbody>
+                              </table>
+                              <h4 class="text-center mt-3 mb-4">CGPA: {{ records[0].cgpa }}</h4>
+                              <hr class="my-4">
+                          {% endfor %}
+                      {% else %}
+                          <p class="text-center">No details added by {{ username }}</p>
+                      {% endif %}
+                  </div>
+      
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+      </div>
 
 <script>
   document.getElementById("academicChanges").addEventListener("submit", function (event) {
@@ -802,10 +740,21 @@ function deleteRow() {
 {% endblock %}
 
 {% block right_button %}
-<button style = 'margin-right: 10px;' class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('change_password') }}';">Change Password</button>
-<button style = 'margin-right: 10px;' type="submit" form="editProfile" id="save-changes-btn" class="btn btn-outline-success">Save Changes</button>
 {% if session["user_type"] == "mentee" %}
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('menteeHome') }}';">Home</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('resources') }}';">Resources</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('analysis') }}';">Analysis</button>
 <button style = 'margin-right: 10px;' type="button" class="btn btn-outline-secondary" id="remark-btn" style="display: none;" data-toggle="modal" data-target="#remarkModal">Remarks</button>
 <button style = 'margin-right: 10px;' type="button" class="btn btn-outline-secondary" id="view-academic-btn" style="display: none;" data-toggle="modal" data-target="#academicModal">Academic Details</button>
 {% endif %}
+
+{% if session["user_type"] == "mentor" %}
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('mentorHome') }}';">Home</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('mentee') }}';">Mentees</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('network') }}';">Network</button>
+{% endif %}
+
+<button style = 'margin-right: 10px;' class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('change_password') }}';">Change Password</button>
+<button style = 'margin-right: 10px;' type="submit" form="editProfile" id="save-changes-btn" class="btn btn-outline-success">Save Changes</button>
+
 {% endblock %}

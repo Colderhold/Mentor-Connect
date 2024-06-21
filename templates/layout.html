@@ -26,7 +26,7 @@
         {% if self.left_button() %}
         <button type="button" class="btn btn-light">{% block left_button %}{% endblock %}</button>
         {% else %}
-        <a style = 'color: white; font-weight: 500;' class="navbar-brand" href="/">SkillSpace</a>
+        <a style = 'color: white; font-weight: 500;' class="navbar-brand" href="/">Mentor Connect</a>
         {% endif %}
         <form class="form-inline">
           {% block right_button %}{% endblock %}
@@ -34,7 +34,20 @@
         </form>
     </nav>
 
+    <footer class="footer text-center text-white">
+        <div class="text-center p-3" style="background-color: #212529">
+            <p class="mb-0">
+                © <span id="currentYear"></span> SIES Graduate School Of Technology. All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
     <script src="https://cdn.botpress.cloud/webchat/v1/inject.js"></script>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+    
     <script>
       window.botpressWebChat.init({
           "composerPlaceholder": "Chat with bot",
@@ -71,8 +84,8 @@
         {% endfor %}
     {% endif %}
 {% endwith %}
-
     {% block body %}
     {% endblock %}
+                
   </body>
 </html>

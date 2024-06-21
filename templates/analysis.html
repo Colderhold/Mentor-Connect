@@ -30,7 +30,7 @@
 
             <div class="col-md-12">
                 <h3>CGPA Progress</h3>
-                <img style='width: 70%; height: 70%; text-align: center;' src="data:image/png;base64,{{ plot_data }}" alt="Mentee CGPA Plot">
+                <img id="line-graph-img" style='width: 70%; height: 70%; text-align: center;' src="data:image/png;base64,{{ plot_data }}" alt="Mentee CGPA Plot">
             </div>
 
             <br><br>
@@ -44,7 +44,7 @@
             <br><br>
             <div class="col-md-12">
                 <h3>IA Marks v/s Semester Marks</h3>
-                <img style='width: 80%; height: 80%; text-align: center;' src="data:image/png;base64,{{ plot_data3 }}" alt="Relationship between Internal Assessment Marks and Semester Marks">
+                <img id="bar-graph-img" style='width: 80%; height: 80%; text-align: center;' src="data:image/png;base64,{{ plot_data3 }}" alt="Relationship between Internal Assessment Marks and Semester Marks">
             </div>
         </div>
         
@@ -58,5 +58,8 @@
 {% endblock %}
 
 {% block right_button %}
+<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('menteeHome') }}';">Home</button>
+<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('resources') }}';">Resources</button>
+<button style = 'margin-right: 10px;' type="button" class="btn btn-outline-primary" onclick="window.location.href='{{ url_for('analysis') }}';">Analysis</button>
 <button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

@@ -253,5 +253,8 @@
 {% endblock %}
 
 {% block right_button %}
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('mentorHome') }}';">Home</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('mentee') }}';">Mentees</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('network') }}';">Network</button>
 <button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

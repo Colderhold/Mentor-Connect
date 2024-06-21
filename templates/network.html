@@ -20,24 +20,24 @@
 </div>
 <br>
 
-  <div class="row" style="padding-bottom: 20px;">
+  <div class="row justify-content-center" style="padding-bottom: 20px;">
 
     {% if mentee_data %}
       {% for mentee in mentee_data %}
-        <div class="col-sm mt-4 mentee-card">
+        <div class="col-sm-12 col-md-6 col-lg-4 mt-4 mentee-card" id='column'>
           <a href="#" data-toggle="modal" data-target="#{{ mentee.username }}">
-            <div class="col-sm mt-4">
+              <div class="mentee-card-wrapper">
                 <div class="flip-card">
                     <div class="flip-card-inner">
                         <div class="flip-card-front" style="background-color: #006666;">
                             {% set file_path = ["img/", mentee.profile_pic]|join %}
-                            <img src="{{ url_for('static', filename='img/' + mentee.profile_pic) }}" alt="Avatar" style="max-height:230px;width:100%;padding:10px; border-radius: 50%;">
+                            <img src="{{ url_for('static', filename='img/' + mentee.profile_pic) }}" alt="Avatar" style="max-height: 200px;width:100%;padding:10px; border-radius: 50%;">
                             <h5 style="color:black; font-weight: 700;" class='mentee-name'>{{ mentee.fname }} {{ mentee.lname }}</h5>
                             
-                            <button type="button" class="btn btn-light">View Profile</button>
+                            <button type="button" class="btn btn-outline-primary">View Profile</button>
                         </div>
                     </div>
-                </div>
+              </div>
             </div>
         </a>        
         </div>
@@ -165,5 +165,8 @@
 {% endblock %}
 
 {% block right_button %}
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('mentorHome') }}';">Home</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('mentee') }}';">Mentees</button>
+<button style = 'margin-right: 10px;' type="button" id="primary" class="btn btn-outline-primary" id="primary" onclick="window.location.href='{{ url_for('network') }}';">Network</button>
 <button style = 'margin-right: 10px;' type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('editProfile') }}';">Profile</button>
 {% endblock %}

@@ -7,9 +7,10 @@ body {
 p {
     font-family: 'Poppins', sans-serif;
     font-size: 1.1em;
-    font-weight: 300;
+    font-weight: 400;
     line-height: 1.7em;
-    color: #999;
+    text-align: justify;
+    color: #000;
 }
 
 a,
@@ -156,6 +157,45 @@ a.article:hover {
     background: #004c4c; /* You can adjust the max height as needed */
 }
 
+#background-image {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    text-align: center;
+    width: 50%;
+    height: 50%;
+    z-index: -1; /* Make sure the image stays behind the content */
+    background-image: url('/static/img/background.jpg'); 
+    background-size: cover; 
+    opacity: 0.5; /* Adjust the opacity as needed */
+}
+
+#background-image1 {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    text-align: center;
+    width: 50%;
+    height: 50%;
+    z-index: -1; /* Make sure the image stays behind the content */
+    background-image: url('/static/img/background1.jpg'); 
+    background-size: cover; 
+    opacity: 0.5; /* Adjust the opacity as needed */
+}
+
+#primary{
+    display: none;
+}
+
+.mentee-card-wrapper {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .flip-card {
+    width: 100%;
+  }
+
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
@@ -179,36 +219,21 @@ a.article:hover {
 ----------------------------------------------------- */
 
 @media (max-width: 768px) {
-    #sidebar {
+    #content{
+        display: block;
         width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: -100%; /* Move the sidebar off the screen */
-        z-index: 999;
-        background: #004c4c;
-        color: #fff;
-        transition: left 0.5s; /* Add a transition for smoother animation */
-    }
-    #sidebar.active {
-        left: 0; /* Slide in the sidebar from the left */
-    }
-    body {
-        display: none; /* Hide the content */
-    }
-    #content.active {
-        width: calc(100% - 250px);
-    }
-    #sidebarCollapse span {
-        display: none;
-    }
-    .nav.navbar-nav.ml-auto .btn-logout {
-        margin-top: 10px; /* Adjust this value to your preference */
     }
 
-    .user_card {
-        width: 90%; /* Adjust the width to your preference */
-        margin: 0 auto;
+    #sidebarCollapse{
+        display: none;
+    }
+
+    #sidebar{
+        display: none;
+    }
+
+    .nav.navbar-nav.ml-auto .btn-logout {
+        margin-top: 10px; /* Adjust this value to your preference */
     }
 
     .form_container {
@@ -218,6 +243,242 @@ a.article:hover {
     .login_btn {
         font-size: 1.2em; /* Adjust the font size of the login button */
     }
+
+    #background-image {
+        position: absolute;
+        max-width: 200px;
+        height: 200px;
+        transform: translate(-2%, 100%);
+        background-size: contain; 
+        background-position: center;
+        opacity: 0.4; /* Adjust the opacity as needed */
+    }
+
+    #background-image1 {
+        position: absolute;
+        max-width: 200px;
+        height: 200px;
+        transform: translate(2%,100%);
+        background-size: contain; 
+        background-position: center;
+        opacity: 0.4; /* Adjust the opacity as needed */
+    }
+
+    p{
+        font-size: 12px;
+        text-align: justify;
+        font-weight: 400;
+    }
+
+    .profile-picture {
+        margin-left: 16%;
+        margin-right: auto;
+        display: block; /* Necessary for margin auto centering */
+    }
+
+    h1{
+        padding-bottom: 20px;
+    }
+
+    h2{
+        text-align: center;
+    }
+
+    .btn{
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .semester-select{
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        margin: 10px 10px;
+        text-align: center;
+        border: none;
+    }
+
+    tr {
+        display: block;
+        margin-bottom: 10px; /* Add spacing between cards */
+    }
+
+    th{
+        display: block;
+    }
+
+    td {
+        display: block;
+        text-align: right;
+        padding: 8px;
+        border: none; /* Remove borders for individual cells */
+        position: relative;
+        padding-left: 50%;
+    }
+
+    td:last-child {
+        border-bottom: none; /* Remove bottom border from the last cell */
+    }
+
+    .button-table {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .button-table div {
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .add-row-button, .delete-row-button {
+        width: 50%;
+    }
+
+    .submit{
+        align-content: center;
+    }
+
+    .btn{
+        align-content: center;
+        margin-right: 10px;
+    }
+
+    .footer{
+        display: block;
+        z-index: 10;
+        position: fixed;
+        bottom: 0;
+    }
+
+    #card-1{
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .mentee-card-wrapper {
+        max-width: 230px;
+      }
+
+    #searchButton{
+        margin: 0 0;
+    }
+
+    .container img{
+        width: 100%;
+        height: 100%;
+        align-items: center;
+    }
+
+    .container h3{
+        text-align: center;
+    }
+
+    #primary{
+        display: block;
+    }
+}
+
+@media (max-width: 400px) {
+    #content{
+        display: block;
+        width: 100%;
+    }
+
+    .mentee-card-wrapper {
+        max-width: 225px;
+      }
+}
+
+.button-table {
+    flex-direction: column;
+    text-align: center;
+    justify-content: space-between;
+}
+
+.button-table div {
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+table {
+    border-collapse: collapse;
+    width: 80%;
+    margin: 20px auto;
+    border: 1px solid #000;
+}
+
+table, th, td {
+    border: 1px solid #000;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.add-row-button, .delete-row-button {
+    display: inline-block;
+    border-radius: 20px;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.form {
+max-width: 100%;
+padding: 5px; 
+border: 1px solid #ccc; 
+border-radius: 5px; 
+}
+
+.form1 {
+max-width: 80%;
+max-height: 30px;
+padding: 5px;
+border: 1px solid #ccc; 
+border-radius: 5px; 
+}
+
+.form::placeholder {
+color: #999;
+}
+
+.form1::placeholder {
+color: #999;
+}
+
+body {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
+}
+
+h4 {
+display: flex;
 }
 
 

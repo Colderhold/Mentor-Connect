@@ -268,7 +268,7 @@ def registerUser():
             return redirect(url_for('register'))
     
         if not (8 <= len(password) <= 20 and any(c.islower() for c in password) and any(c.isupper() for c in password) and any(c.isdigit() for c in password)):
-            flash("Password must be 8-20 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.")
+            flash("Error: Password must be 8-20 characters long and contain at least one uppercase letter, one lowercase letter, and one digit.")
             return redirect(url_for('register'))
         
         new_mentee = Mentee(fname=fname, lname=lname, prn_num = "", year = '', branch = "", batch = "",username=username, profile_pic= "mentee_pic.png" , password=password, linkedin_pro = "", dob = "", mobile_no = "", address = '', blood_grp = '', father_name = '', father_occupation = '', father_mobile_no = '', father_email = '', mother_name = '', mother_occupation = '', mother_mobile_no = '', mother_email = '', ssc = '', hsc = '', cet_jee = '', hobbies = '', strengths = '', weakness = '', goals = '', email=email, cv_help=cv_help, meetAlumni= meetAlumni, mockInterview=mockInterview)

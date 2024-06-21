@@ -235,3 +235,31 @@ a:hover {
     justify-content: center;
     align-items: center;
 }
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .register-right{
+        background: #f8f9fa;
+        border-top-left-radius: 10%;
+        border-bottom-left-radius: 10%;
+        border-top-right-radius: 10%;
+        border-bottom-right-radius: 10%;
+    }
+
+    .footer{
+        display: block;
+        z-index: 10;
+        position: fixed;
+        bottom: 0;
+    }
+
+    #send{
+        text-align: center;
+    }
+}

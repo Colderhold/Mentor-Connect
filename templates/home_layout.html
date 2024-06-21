@@ -42,13 +42,14 @@
       <img src="{{ url_for('static', filename='img/logo.png') }}" class="brand_logo" alt="Logo">
   </div>
 
+  <div class="container-fluid">
     <div class="wrapper">
         <!-- Sidebar Holder -->
         <nav id="sidebar">
           <br>
           <br>
             <div class="sidebar-header">
-                <h3>SkillSpace</h3>
+                <h3>Mentor Connect</h3>
             </div>
 
             {% if session["user_type"] == "mentor" %}
@@ -116,6 +117,7 @@
               </div>
           </nav>
 
+
           {% with messages = get_flashed_messages() %}
     {% if messages %}
         {% for message in messages %}
@@ -137,8 +139,9 @@
           {% block body %}
           {% endblock %}
 
-            </div>
+        </div>
     </div>
+  </div>
 
       <!-- jQuery CDN - Slim version (=without AJAX) -->
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -148,6 +151,10 @@
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
       <!-- jQuery Custom Scroller CDN -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
+      <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
 
       <script>
         // Function to toggle the collapse element
