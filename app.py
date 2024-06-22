@@ -29,7 +29,7 @@ from reportlab.graphics.shapes import Drawing, Rect
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-
+#add some comment to redeploy on render
 mail = Mail(app)
 s = URLSafeTimedSerializer('Thisisasecret!')
 
