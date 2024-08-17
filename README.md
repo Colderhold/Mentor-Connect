@@ -36,7 +36,7 @@ Hosting: Vercel Platform (Production), XAMPP (Local Development)
 
 **Installation and Usage**
 
-Clone the repository: git clone [repository_url]
+Clone the repository
 
 Install dependencies: pip install -r requirements.txt
 
