@@ -34,8 +34,7 @@ mail = Mail(app)
 s = URLSafeTimedSerializer('Thisisasecret!')
 
 # Configure session to use filesystem
-#mysql+mysqlconnector://sql7714366:RHN8d4F6p6@sql7.freesqldatabase.com:3306/sql7714366
-app.config["SQLALCHEMY_DATABASE_URI"] ="mysql+mysqlconnector://root:@localhost:3307/qrconnect"
+app.config["SQLALCHEMY_DATABASE_URI"] ="mysql+mysqlconnector://root:@localhost:3306/qrconnect"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)

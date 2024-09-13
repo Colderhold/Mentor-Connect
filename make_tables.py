@@ -8,8 +8,7 @@ from models import *
 app = Flask(__name__)
 
 # Tell Flask what SQLAlchemy databas to use.
-#mysql+mysqlconnector://sql7714366:RHN8d4F6p6@sql7.freesqldatabase.com:3306/sql7714366
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+mysqlconnector://root:@localhost:3307/qrconnect"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+mysqlconnector://root:@localhost:3306/qrconnect"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Link the Flask app with the database (no Flask app is actually being run yet).
