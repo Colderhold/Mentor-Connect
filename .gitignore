@@ -186,3 +186,11 @@ Desktop.ini
 
 # Linux
 *~
+
+# Ignore the config.cfg file
+config.cfg
+
+# Other files you may want to ignore
+node_modules/
+build/
+.env
