@@ -1,4 +1,4 @@
-# QRConnect
+# Mentor-Connect
 
 **Overview**
 
